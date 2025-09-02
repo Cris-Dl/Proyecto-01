@@ -17,3 +17,6 @@ class Instructor(Usuario):
         self.__facultad = facultad
         self.cursos = cursos
 
+class FuncionPrograma:
+    def __init__(self):
+        self.diccionario = {}
