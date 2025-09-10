@@ -26,6 +26,11 @@ class Estudiante(Usuario):
     def consultar_notas(self):
         return self.__cursos
 
+    def consultar_cursos(self):
+        print(f"Cursos inscritos de {self.nombre}:")
+        for curso in self.__cursos:
+            print(f"- {curso}")
+
 
 class Instructor(Usuario):
     def __init__(self, nombre, rol, id, facultad):
