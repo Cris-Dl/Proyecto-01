@@ -42,7 +42,7 @@ while True:
         case "11":
             print()
         case "12":
-            print()
+            print("Gracias por usar el programa.")
             break
         case _:
             print("Valor invalido. Vuelva a intentar")
