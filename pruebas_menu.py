@@ -70,7 +70,29 @@ class Instructor(Usuario):
     def __init__(self, nombre, rol, id, facultad, cursos):
         super().__init__(nombre, rol, id)
         self.__facultad = facultad
-        self.cursos = cursos
+        self.__cursos = cursos
+
+    @property
+    def facultad(self):
+        return self.__facultad
+
+    @facultad.setter
+    def facultad(self, nueva_facultad):
+        if nueva_facultad:
+            self.__facultad = nueva_facultad
+        else:
+            print("El campo no puede estar vacio")
+
+    @property
+    def cursos(self):
+        return self.__cursos
+
+    @cursos.setter
+    def cursos(self, nuevos_cursos):
+        if nuevos_cursos:
+            self.__cursos = nuevos_cursos
+        else:
+            print("El campo no puede estar vacio")
 
 class Curso:
     def __init__(self, nombre, id):
@@ -100,7 +122,7 @@ class Informacion:
     def guardar_usuarios(self, id, datos):
         self.usuarios[id] = datos
 
-class CrearCurso(Informacion):
+class CrearCurso:
     def __init__(self, manejo):
         super().__init__()
         self.manejo = manejo
@@ -109,7 +131,7 @@ class CrearCurso(Informacion):
         nombre_curso = input("Ingrese el nombre del curso: ")
         id_curso = input("Ingresee el ID del curso: ")
         datos_curso = {'nombre': nombre_curso,'ID': id_curso}
-        self.manejo.guardar_cursos(nombre_curso, datos_curso)
+        self.manejo.guardar_cursos(id_curso, datos_curso)
         print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
 
 class CrearUsuario:
@@ -124,15 +146,55 @@ class CrearUsuario:
         carrera = input("Ingrese la carrera que pertenece el estudiante: ")
         cursos_inscritos = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos)
-        self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.id,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos})
+        self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos})
         print(f"\nEstudiante '{nombre}' registrado con éxito.")
 
     def registrar_instructor(self):
+        nombre = input("Ingrese el nombre del instructor: ")
+        rol = "Instructor"
+        id = input("Ingrese el ID del instructor: ")
+        facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
+        cursos_asignados = []
+        nuevo_instructor = Instructor(nombre, rol, id, facultad, cursos_asignados)
+        self.manejo.guardar_usuarios(id, {'nombre': nuevo_instructor.nombre,'rol': nuevo_instructor.rol,'facultad': nuevo_instructor.facultad,'cursos':nuevo_instructor.cursos})
+        print(f"\nInstructor '{nombre}' registrado con éxito.")
 
+class AsignarCurso:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def asignar_curso(self):
+        id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+        if id_busqueda not in self.manejo.usuarios:
+            print("Error: El estudiante con ese carnet no existe.")
+            return
+        print("\nCursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos disponibles para asignar.")
+            return
+        for curso_id, curso_info in self.manejo.cursos.items():
+            print(f"- ID: {curso_id} | Nombre: {curso_info['nombre']}")
+        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+        cursos = [id.strip() for id in curso_ids_str.split(',') if id.strip()]
+        estudiante = self.manejo.usuarios[id_busqueda]
+        cursos_asignados = []
+        for curso_id in cursos:
+            if curso_id in self.manejo.cursos:
+                if curso_id not in estudiante['cursos']:
+                    estudiante['cursos'].append(curso_id)
+                    cursos_asignados.append(self.manejo.cursos[curso_id]['nombre'])
+                else:
+                    print(f"Advertencia: El estudiante ya está inscrito en el curso con ID {curso_id}.")
+            else:
+                print(f"Error: El curso con ID {curso_id} no existe.")
+        print(f"\nSe han asignado {len(cursos_asignados)} curso(s) exitosamente a {estudiante['nombre']}.")
+        if cursos_asignados:
+            print(f"Cursos asignados: {', '.join(cursos_asignados)}")
 
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
+asignar_curso = AsignarCurso(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -170,10 +232,14 @@ while True:
                     print()
                 case "2":
                     print("Registrar Instructor")
+                    crear_usuario.registrar_instructor()
+                    print()
                 case "3":
                     print("Se ha cancelado el registro")
                     print()
         case "4":
+            print("Asignar curso")
+            asignar_curso.asignar_curso()
             print()
         case "5":
             print()
