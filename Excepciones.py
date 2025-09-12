@@ -223,6 +223,7 @@ class CrearUsuario:
                 print(f"Error: {e}")
             else:
                 break
+
         cursos_asignados = []
         nuevo_instructor = Instructor(nombre, rol, id, facultad, cursos_asignados)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_instructor.nombre,'rol': nuevo_instructor.rol,'facultad': nuevo_instructor.facultad,'cursos':nuevo_instructor.cursos})
