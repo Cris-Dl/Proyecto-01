@@ -158,20 +158,69 @@ class CrearUsuario:
         self.manejo = manejo
 
     def registrar_estudiante(self):
-        nombre = input("Ingrese el nombre del estudiante: ")
+        while True:
+            try:
+                nombre = input("Ingrese el nombre del estudiante: ")
+                if not nombre.strip():
+                    raise ValueError("El nombre no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         rol = "Estudiante"
-        id = input("Ingrese el carnet del estudiante: ")
-        carrera = input("Ingrese la carrera que pertenece el estudiante: ")
+        while True:
+            try:
+                id = input("Ingrese el carnet del estudiante: ")
+                if not id.strip():
+                    raise ValueError("El id no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
+        while True:
+            try:
+                carrera = input("Ingrese la carrera que pertenece el estudiante: ")
+                if not carrera.strip():
+                    raise ValueError ("La carrera no puede quedar vacia \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         cursos_inscritos = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos})
         print(f"\nEstudiante '{nombre}' registrado con éxito.")
 
     def registrar_instructor(self):
-        nombre = input("Ingrese el nombre del instructor: ")
+        while True:
+            try:
+                nombre = input("Ingrese el nombre del instructor: ")
+                if not nombre.strip():
+                    raise ValueError("El nombre no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         rol = "Instructor"
-        id = input("Ingrese el ID del instructor: ")
-        facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
+        while True:
+            try:
+                id = input("Ingrese el ID del instructor: ")
+                if not  id.strip():
+                    raise ValueError ("El id no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
+        while True:
+            try:
+                facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
+                if not facultad.strip():
+                    raise ValueError ("El nombre de la facultad no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
+
         cursos_asignados = []
         nuevo_instructor = Instructor(nombre, rol, id, facultad, cursos_asignados)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_instructor.nombre,'rol': nuevo_instructor.rol,'facultad': nuevo_instructor.facultad,'cursos':nuevo_instructor.cursos})
@@ -182,7 +231,15 @@ class AsignarCurso:
         self.manejo = manejo
 
     def asignar_curso(self):
-        id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+        while True:
+            try:
+                id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+                if not id_busqueda.strip():
+                    raise ValueError("El id a buscar no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         if id_busqueda not in self.manejo.usuarios:
             print("Error: El estudiante con ese carnet no existe.")
             return
@@ -192,7 +249,15 @@ class AsignarCurso:
             return
         for curso_id, curso_info in self.manejo.cursos.items():
             print(f"- ID: {curso_id} | Nombre: {curso_info['nombre']}")
-        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+        while True:
+            try:
+                curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+                if not curso_ids_str.strip():
+                    raise ValueError("El campo de cursos no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         cursos = [id.strip() for id in curso_ids_str.split(',') if id.strip()]
         estudiante = self.manejo.usuarios[id_busqueda]
         cursos_asignados = []
@@ -220,12 +285,36 @@ class CrearActividad:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        while True:
+            try:
+                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+                if not curso_id.strip():
+                    raise ValueError("El id de la tarea no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
-        nombre_tarea = input("Ingrese el nombre de la tarea: ")
-        descripcion_tarea = input("Describa el contenido de la tarea: ")
+        while True:
+            try:
+                nombre_tarea = input("Ingrese el nombre de la tarea: ")
+                if not nombre_tarea.strip():
+                    raise ValueError("El nombre de la tarea no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
+        while True:
+            try:
+                descripcion_tarea = input("Describa el contenido de la tarea: ")
+                if not descripcion_tarea.strip():
+                    raise ValueError("La descripcion de la tarea no puede quedar vacia\n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         tarea_info = {'nombre': nombre_tarea, 'descripcion': descripcion_tarea, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_tarea}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
