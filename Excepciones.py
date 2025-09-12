@@ -301,7 +301,7 @@ class CrearActividad:
             try:
                 nombre_tarea = input("Ingrese el nombre de la tarea: ")
                 if not nombre_tarea.strip():
-                    raise ValueError("El combre de la tarea no puede quedar vacio \n")
+                    raise ValueError("El nombre de la tarea no puede quedar vacio \n")
             except ValueError as e:
                 print(f"Error: {e}")
             else:
