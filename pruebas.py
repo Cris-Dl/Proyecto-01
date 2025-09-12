@@ -62,3 +62,11 @@ class FuncionPrograma:
             else:
                 print(f"{curso}: No registrada")
 
+est1 = Estudiante("cris", "Estudiante", 1, "Ingeniería")
+inst1 = Instructor("ing.tello", "Catedratico", 101, "Progra")
+
+inst1.asignar_curso("Programación")
+est1.inscribir_curso("Programación")
+inst1.registrar_nota_estudiante(est1, "Programación", 95)
+funcion = FuncionPrograma()
+funcion.mostrar_notas(est1)
