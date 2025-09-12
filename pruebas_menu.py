@@ -274,7 +274,11 @@ class AsignarNota:
         print(f"\nAsignando notas para la actividad '{nombre_actividad}':")
         for estudiante in estudiantes_inscritos:
             try:
-                id_estudiante = next(key for key, value in self.manejo.usuarios.items() if value == estudiante)
+                id_estudiante = None
+                for clave, valor in self.manejo.usuarios.items():
+                    if valor == estudiante:
+                        id_estudiante = clave
+                        break
                 nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
                 clave_nota = f"{id_estudiante}-{clave}"
                 self.manejo.guardar_notas(clave_nota, {'nota': nota, 'id_estudiante': id_estudiante,'nombre_actividad': nombre_actividad})
