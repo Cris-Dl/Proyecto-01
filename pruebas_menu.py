@@ -115,12 +115,16 @@ class Informacion:
         super().__init__()
         self.cursos = {}
         self.usuarios = {}
+        self.actividades = {}
 
     def guardar_cursos(self, nombre_curso, datos):
         self.cursos[nombre_curso] = datos
 
     def guardar_usuarios(self, id, datos):
         self.usuarios[id] = datos
+
+    def guardar_actividades(self, nombre, datos):
+        self.actividades[nombre] = datos
 
 class CrearCurso:
     def __init__(self, manejo):
@@ -191,10 +195,33 @@ class AsignarCurso:
         if cursos_asignados:
             print(f"Cursos asignados: {', '.join(cursos_asignados)}")
 
+class CrearActividad:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def crear_tarea(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos para asignar tareas.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        if curso_id not in self.manejo.cursos:
+            print(f"Error: El curso con ID {curso_id} no existe.")
+            return
+        nombre_tarea = input("Ingrese el nombre de la tarea: ")
+        descripcion_tarea = input("Describa el contenido de la tarea: ")
+        tarea_info = {'nombre': nombre_tarea, 'descripcion': descripcion_tarea, 'curso_id': curso_id}
+        clave_actividad = f"{curso_id}-{nombre_tarea}"
+        self.manejo.guardar_actividades(clave_actividad, tarea_info)
+        print(f"\nTarea '{nombre_tarea}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
+
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
 asignar_curso = AsignarCurso(manejo)
+asignar_actividad = CrearActividad(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -238,11 +265,25 @@ while True:
                     print("Se ha cancelado el registro")
                     print()
         case "4":
-            print("Asignar curso")
+            print("Asignar Curso")
             asignar_curso.asignar_curso()
             print()
         case "5":
+            print("Crear Tarea o Evaluación")
+            print("1. Crear Tarea")
+            print("2. Crear Evaluación")
+            print("3. Cancelar Creación")
+            menu_option3 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
+            match menu_option3:
+                case "1":
+                    print("Crear Tarea")
+                    asignar_actividad.crear_tarea()
+                    print()
+                case "2":
+                    print("Crear Evaluación")
+                case "3":
+                    print("Cancelando creación de actividad")
         case "6":
             print()
         case "7":
