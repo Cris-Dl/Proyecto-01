@@ -158,10 +158,34 @@ class CrearUsuario:
         self.manejo = manejo
 
     def registrar_estudiante(self):
-        nombre = input("Ingrese el nombre del estudiante: ")
+        while True:
+            try:
+                nombre = input("Ingrese el nombre del estudiante: ")
+                if not nombre.strip():
+                    raise ValueError("El nombre no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         rol = "Estudiante"
-        id = input("Ingrese el carnet del estudiante: ")
-        carrera = input("Ingrese la carrera que pertenece el estudiante: ")
+        while True:
+            try:
+                id = input("Ingrese el carnet del estudiante: ")
+                if not id.strip():
+                    raise ValueError("El id no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
+        while True:
+            try:
+                carrera = input("Ingrese la carrera que pertenece el estudiante: ")
+                if not carrera.strip():
+                    raise ValueError ("La carrera no puede quedar vacia \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         cursos_inscritos = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos})
