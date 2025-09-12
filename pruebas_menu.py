@@ -116,6 +116,7 @@ class Informacion:
         self.cursos = {}
         self.usuarios = {}
         self.actividades = {}
+        self.notas = {}
 
     def guardar_cursos(self, nombre_curso, datos):
         self.cursos[nombre_curso] = datos
@@ -125,6 +126,9 @@ class Informacion:
 
     def guardar_actividades(self, nombre, datos):
         self.actividades[nombre] = datos
+
+    def guardar_notas(self, clave, datos):
+        self.notas[clave] = datos
 
 class CrearCurso:
     def __init__(self, manejo):
@@ -208,18 +212,80 @@ class CrearActividad:
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
-        nombre_tarea = input("Ingrese el nombre de la tarea: ")
+        nombre_tarea = input("Ingrese el nombre de la tarea: ").upper()
         descripcion_tarea = input("Describa el contenido de la tarea: ")
         tarea_info = {'nombre': nombre_tarea, 'descripcion': descripcion_tarea, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_tarea}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
         print(f"\nTarea '{nombre_tarea}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
 
+    def crear_evaluacion(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos para asignar tareas.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        if curso_id not in self.manejo.cursos:
+            print(f"Error: El curso con ID {curso_id} no existe.")
+            return
+        nombre_evaluacion = input("Ingrese el nombre del tipo de evaluación: ").upper()
+        descripcion_evaluacion = input("Describa el contenido de la evalución: ")
+        tarea_info = {'nombre': nombre_evaluacion, 'descripcion': descripcion_evaluacion, 'curso_id': curso_id}
+        clave_actividad = f"{curso_id}-{nombre_evaluacion}"
+        self.manejo.guardar_actividades(clave_actividad, tarea_info)
+        print(
+            f"\nTarea '{nombre_evaluacion}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
+
+class AsignarNota:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def asignar_nota(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos creados para asignar notas.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_curso = input("\nIngrese el ID del curso: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso no existe.")
+            return
+        actividades = [info for info in self.manejo.actividades.values() if info['curso_id'] == id_curso]
+        if not actividades:
+            print("No hay tareas o evaluaciones creadas para este curso.")
+            return
+        print("\nActividades disponibles en el curso:")
+        for actividad in actividades:
+            print(f"- {actividad['nombre']} ({actividad['descripcion']})")
+        nombre_actividad = input("\nIngrese el nombre de la actividad a calificar: ").upper()
+        clave = f"{id_curso}-{nombre_actividad}"
+        if clave not in self.manejo.actividades:
+            print("Error: La actividad no se encontró en este curso.")
+            return
+        estudiantes_inscritos = [estudiante_info for estudiante_info in self.manejo.usuarios.values()  if estudiante_info['rol'] == 'Estudiante' and id_curso in estudiante_info['cursos']]
+        if not estudiantes_inscritos:
+            print("No hay estudiantes inscritos en este curso.")
+            return
+        print(f"\nAsignando notas para la actividad '{nombre_actividad}':")
+        for estudiante in estudiantes_inscritos:
+            try:
+                id_estudiante = next(key for key, value in self.manejo.usuarios.items() if value == estudiante)
+                nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
+                clave_nota = f"{id_estudiante}-{clave}"
+                self.manejo.guardar_notas(clave_nota, {'nota': nota, 'id_estudiante': id_estudiante,'nombre_actividad': nombre_actividad})
+                print(f"Nota de {nota} registrada para {estudiante['nombre']}.")
+            except ValueError:
+                print("Error: La nota debe ser un número. Saltando a la siguiente nota.")
+
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
 asignar_curso = AsignarCurso(manejo)
 asignar_actividad = CrearActividad(manejo)
+asignar_nota = AsignarNota(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -280,9 +346,13 @@ while True:
                     print()
                 case "2":
                     print("Crear Evaluación")
+                    asignar_actividad.crear_evaluacion()
+                    print()
                 case "3":
                     print("Cancelando creación de actividad")
         case "6":
+            print("Asignar nota")
+            asignar_nota.asignar_nota()
             print()
         case "7":
             print()
