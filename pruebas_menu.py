@@ -140,6 +140,8 @@ class CrearCurso:
         id_curso = input("Ingresee el ID del curso: ")
         datos_curso = {'nombre': nombre_curso, 'ID': id_curso}
         self.manejo.guardar_cursos(id_curso, datos_curso)
+        print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
+
 class CrearUsuario:
     def __init__(self, manejo):
         super().__init__()
@@ -280,12 +282,49 @@ class AsignarNota:
             except ValueError:
                 print("Error: La nota debe ser un número. Saltando a la siguiente nota.")
 
+class ConsultarCurso:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_curso(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos registrados.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_curso = input("\nIngrese el ID del curso que desea consultar: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+        print(f"\n--- Información del Curso: {self.manejo.cursos[id_curso]['nombre']} ---")
+        instructor_encontrado = None
+        for usuario_id, usuario_info in self.manejo.usuarios.items():
+            if usuario_info['rol'] == 'Instructor' and id_curso in usuario_info['cursos']:
+                instructor_encontrado = usuario_info
+                break
+        if instructor_encontrado:
+            print(f"Instructor: {instructor_encontrado['nombre']}")
+        else:
+            print("Instructor: Aún no se ha asignado un instructor a este curso.")
+        estudiantes_inscritos = [
+            usuario_info['nombre']
+            for usuario_info in self.manejo.usuarios.values()
+            if usuario_info['rol'] == 'Estudiante' and id_curso in usuario_info['cursos']]
+        print("\nEstudiantes inscritos:")
+        if estudiantes_inscritos:
+            for estudiante in estudiantes_inscritos:
+                print(f"- {estudiante}")
+        else:
+            print("No hay estudiantes inscritos en este curso.")
+
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
 asignar_curso = AsignarCurso(manejo)
 asignar_actividad = CrearActividad(manejo)
 asignar_nota = AsignarNota(manejo)
+consultar_curso = ConsultarCurso(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -355,6 +394,8 @@ while True:
             asignar_nota.asignar_nota()
             print()
         case "7":
+            print("Consultar Curso")
+            consultar_curso.consultar_curso()
             print()
         case "8":
             print()
