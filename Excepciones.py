@@ -234,7 +234,15 @@ class AsignarCurso:
         self.manejo = manejo
 
     def asignar_curso(self):
-        id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+        while True:
+            try:
+                id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+                if not id_busqueda.strip():
+                    raise ValueError("El id a buscar no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         if id_busqueda not in self.manejo.usuarios:
             print("Error: El estudiante con ese carnet no existe.")
             return
@@ -244,7 +252,15 @@ class AsignarCurso:
             return
         for curso_id, curso_info in self.manejo.cursos.items():
             print(f"- ID: {curso_id} | Nombre: {curso_info['nombre']}")
-        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+        while True:
+            try:
+                curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+                if not curso_ids_str.strip():
+                    raise ValueError("El campo de cursos no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         cursos = [id.strip() for id in curso_ids_str.split(',') if id.strip()]
         estudiante = self.manejo.usuarios[id_busqueda]
         cursos_asignados = []
