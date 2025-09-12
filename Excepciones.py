@@ -1,6 +1,3 @@
-from locale import windows_locale
-
-
 class Usuario:
     def __init__(self, nombre, rol, id):
         super().__init__()
@@ -288,12 +285,36 @@ class CrearActividad:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        while True:
+            try:
+                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+                if not curso_id.strip():
+                    raise ValueError("El id de la tarea no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
-        nombre_tarea = input("Ingrese el nombre de la tarea: ")
-        descripcion_tarea = input("Describa el contenido de la tarea: ")
+        while True:
+            try:
+                nombre_tarea = input("Ingrese el nombre de la tarea: ")
+                if not nombre_tarea.strip():
+                    raise ValueError("El combre de la tarea no puede quedar vacio \n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
+        while True:
+            try:
+                descripcion_tarea = input("Describa el contenido de la tarea: ")
+                if not descripcion_tarea.strip():
+                    raise ValueError("La descripcion de la tarea no puede quedar vacia\n")
+            except ValueError as e:
+                print(f"Error: {e}")
+            else:
+                break
         tarea_info = {'nombre': nombre_tarea, 'descripcion': descripcion_tarea, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_tarea}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
