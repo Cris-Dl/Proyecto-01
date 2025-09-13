@@ -322,6 +322,37 @@ class ConsultarCurso:
         else:
             print("No hay estudiantes inscritos en este curso.")
 
+
+class ConsultarEstudiantes:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_estudiantes(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos registrados.")
+            return
+
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+
+        id_curso = input("\nIngrese el ID del curso para ver los estudiantes inscritos: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+
+        estudiantes = []
+        for id, datos in self.manejo.usuarios.items():
+            if datos['rol'] == 'Estudiante' and id_curso in datos['cursos']:
+                estudiantes.append((id, datos['nombre']))
+
+        print(f"\n--- Estudiantes inscritos en el curso '{self.manejo.cursos[id_curso]['nombre']}' ---")
+        if estudiantes:
+            for carnet, nombre in estudiantes:
+                print(f"- {nombre} (Carnet: {carnet})")
+        else:
+            print("No hay estudiantes inscritos en este curso.")
+
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
@@ -329,6 +360,7 @@ asignar_curso = AsignarCurso(manejo)
 asignar_actividad = CrearActividad(manejo)
 asignar_nota = AsignarNota(manejo)
 consultar_curso = ConsultarCurso(manejo)
+consultar_estudiantes= ConsultarEstudiantes(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -402,6 +434,8 @@ while True:
             consultar_curso.consultar_curso()
             print()
         case "8":
+            print("Consultar Estudiantes Inscritos")
+            consultar_estudiantes.consultar_estudiantes()
             print()
         case "9":
             print()
