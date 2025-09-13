@@ -353,6 +353,39 @@ class ConsultarEstudiantes:
         else:
             print("No hay estudiantes inscritos en este curso.")
 
+class ConsultarCalificaciones:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_calificaciones(self):
+        estudiantes = []
+        for id, datos in self.manejo.usuarios.items():
+            if datos['rol'] == 'Estudiante':
+                estudiantes.append((id, datos['nombre']))
+        if not estudiantes:
+            print("No hay estudiantes registrados.")
+            return
+
+        print("Estudiantes registrados:")
+        for id, nombre in estudiantes:
+            print(f"- {nombre} (Carnet: {id})")
+
+        id_estudiante = input("\nIngrese el carnet del estudiante: ")
+        if id_estudiante not in self.manejo.usuarios or self.manejo.usuarios[id_estudiante]['rol'] != 'Estudiante':
+            print("Estudiante no encontrado.")
+            return
+
+        print(f"\n--- Calificaciones de {self.manejo.usuarios[id_estudiante]['nombre']} ---")
+        notas_encontradas = False
+        for clave, datos_nota in self.manejo.notas.items():
+            if datos_nota['id_estudiante'] == id_estudiante:
+                print(f"{datos_nota['nombre_actividad']}: {datos_nota['nota']}")
+                notas_encontradas = True
+
+        if not notas_encontradas:
+            print("No hay calificaciones registradas para este estudiante.")
+
+
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
@@ -361,6 +394,7 @@ asignar_actividad = CrearActividad(manejo)
 asignar_nota = AsignarNota(manejo)
 consultar_curso = ConsultarCurso(manejo)
 consultar_estudiantes= ConsultarEstudiantes(manejo)
+consultar_calificaciones=ConsultarCalificaciones(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -440,6 +474,8 @@ while True:
         case "9":
             print()
         case "10":
+            print("Consultar calificaciones")
+            consultar_calificaciones.consultar_calificaciones()
             print()
         case "11":
             print()
