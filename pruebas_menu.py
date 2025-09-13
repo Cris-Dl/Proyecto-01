@@ -1,3 +1,4 @@
+import datetime
 class Usuario:
     def __init__(self, nombre, rol, id):
         super().__init__()
@@ -39,10 +40,11 @@ class Usuario:
             print("El campo no puede estar vacio")
 
 class Estudiante(Usuario):
-    def __init__(self, nombre, rol, id, carrera, cursos):
+    def __init__(self, nombre, rol, id, carrera, cursos, reportes):
         super().__init__(nombre, rol, id)
         self.__carrera = carrera
         self.__cursos = cursos
+        self.__reporte = reportes
 
     @property
     def carrera(self):
@@ -65,6 +67,24 @@ class Estudiante(Usuario):
             self.__cursos = nuevos_cursos
         else:
             print("El campo no puede estar vacio")
+
+    @property
+    def reportes(self):
+        return self.__reporte
+
+    @reportes.setter
+    def reportes(self, nuevo_reporte):
+        if nuevo_reporte:
+            self.__reporte = nuevo_reporte
+        else:
+            print("El campo no puede estar vacio")
+
+    def mostrar_info(self):
+        print(f"Nombre del estudiante: {self.nombre}")
+        print(f"Carnet: {self.id}")
+        print(f"Carrera: {self.carrera}")
+        print(f"Cursos: {self.cursos}")
+        print(f"Reportes: {self.reportes}")
 
 class Instructor(Usuario):
     def __init__(self, nombre, rol, id, facultad, cursos):
@@ -93,6 +113,13 @@ class Instructor(Usuario):
             self.__cursos = nuevos_cursos
         else:
             print("El campo no puede estar vacio")
+
+    def mostrar_info(self):
+        print(f"Nombre del Instructor: {self.nombre}")
+        print(f"Cargo: {self.rol}")
+        print(f"ID: {self.id}")
+        print(f"Facultad: {self.facultad}")
+        print(f"Cursos acargos: {self.cursos}")
 
 class Curso:
     def __init__(self, nombre, id):
@@ -142,6 +169,57 @@ class CrearCurso:
         self.manejo.guardar_cursos(id_curso, datos_curso)
         print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
 
+class AdministrarCurso:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def eliminar_usuario(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos creados.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+        print("\nUsuarios inscritos en el curso:")
+        usuarios_en_curso = []
+        for id_usuario, info_usuario in self.manejo.usuarios.items():
+            if id_curso in info_usuario['cursos']:
+                usuarios_en_curso.append((id_usuario, info_usuario['nombre']))
+        if not usuarios_en_curso:
+            print("No hay usuarios inscritos en este curso.")
+            return
+        for id_usuario, nombre_usuario in usuarios_en_curso:
+            print(f"- {nombre_usuario} (ID: {id_usuario})")
+        id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ")
+        if id_usuario not in self.manejo.usuarios:
+            print("Error: El usuario con ese ID no existe.")
+            return
+        if id_curso in self.manejo.usuarios[id_usuario]['cursos']:
+            self.manejo.usuarios[id_usuario]['cursos'].remove(id_curso)
+            print(
+                f"El usuario '{self.manejo.usuarios[id_usuario]['nombre']}' ha sido eliminado del curso '{self.manejo.cursos[id_curso]['nombre']}' exitosamente.")
+        else:
+            print("Error: El usuario no está inscrito en este curso.")
+
+    def cambiar_nombre(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos creados.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+        nuevo_nombre = input("Ingrese el nuevo nombre para el curso: ")
+        self.manejo.cursos[id_curso]['nombre'] = nuevo_nombre
+        print(f"El nombre del curso con ID '{id_curso}' ha sido cambiado a '{nuevo_nombre}' exitosamente.")
+
 class CrearUsuario:
     def __init__(self, manejo):
         super().__init__()
@@ -153,8 +231,9 @@ class CrearUsuario:
         id = input("Ingrese el carnet del estudiante: ")
         carrera = input("Ingrese la carrera que pertenece el estudiante: ")
         cursos_inscritos = []
-        nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos)
-        self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos})
+        reportes = []
+        nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos, reportes)
+        self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos,'reportes': nuevo_estudiante.reportes})
         print(f"\nEstudiante '{nombre}' registrado con éxito.")
 
     def registrar_instructor(self):
@@ -409,6 +488,67 @@ class ConsultarActividad:
         else:
             print("No hay actividades registradas para este curso.")
 
+class Reportes:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def registrar_reporte(self):
+        estudiantes = []
+        for id, datos in self.manejo.usuarios.items():
+            if datos['rol'] == 'Estudiante':
+                estudiantes.append((id, datos['nombre']))
+        if not estudiantes:
+            print("No hay estudiantes registrados.")
+            return
+        print("\nEstudiantes disponibles:")
+        for id, nombre in estudiantes:
+            print(f"- {nombre} (Carnet: {id})")
+        id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ")
+        if id_estudiante not in self.manejo.usuarios or self.manejo.usuarios[id_estudiante]['rol'] != 'Estudiante':
+            print("Error: Estudiante no encontrado.")
+            return
+        estudiante_info = self.manejo.usuarios[id_estudiante]
+        print("\n--- Generando Reporte Descriptivo para el Estudiante ---")
+        print(f"Nombre: {estudiante_info['nombre']}")
+        print(f"ID/Carnet: {id_estudiante}")
+        print(f"Carrera: {estudiante_info['carrera']}")
+        print("\nCursos Inscritos:")
+        if estudiante_info['cursos']:
+            for curso_id in estudiante_info['cursos']:
+                nombre_curso = self.manejo.cursos[curso_id]['nombre']
+                print(f"  - {nombre_curso} (ID: {curso_id})")
+        else:
+            print("  No está inscrito en ningún curso.")
+        descripcion_reporte = input("\nPor favor, ingrese una descripción del desempeño del estudiante:\n")
+        reporte_guardar = {'fecha': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'descripcion': descripcion_reporte}
+        estudiante_info['reportes'].append(reporte_guardar)
+        print("\nReporte descriptivo generado y guardado con éxito.")
+
+class VerInfo:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def ver_informacion(self):
+        id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ")
+        if id_busqueda not in self.manejo.usuarios:
+            print("Error: El usuario no existe en la base de datos.")
+            return
+        usuario_info = self.manejo.usuarios[id_busqueda]
+        nombre = usuario_info['nombre']
+        rol = usuario_info['rol']
+        if rol == "Estudiante":
+            carrera = usuario_info['carrera']
+            cursos = usuario_info['cursos']
+            reportes = usuario_info['reportes']
+            estudiante = Estudiante(nombre, rol, id_busqueda, carrera, cursos, reportes)
+            estudiante.mostrar_info()
+        elif rol == "Instructor":
+            facultad = usuario_info['facultad']
+            cursos = usuario_info['cursos']
+            instructor = Instructor(nombre, rol, id_busqueda, facultad, cursos)
+            instructor.mostrar_info()
+        else:
+            print("Rol de usuario no reconocido.")
 
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
@@ -420,6 +560,9 @@ consultar_curso = ConsultarCurso(manejo)
 consultar_estudiantes = ConsultarEstudiantes(manejo)
 consultar_calificaciones = ConsultarCalificaciones(manejo)
 consultar_actividad = ConsultarActividad(manejo)
+crear_reporte = Reportes(manejo)
+administrar_cursos = AdministrarCurso(manejo)
+ver_informacion = VerInfo(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -433,7 +576,8 @@ while True:
     print("9. Consultar Tarea o Evaluación") #Realizar sub-menú
     print("10. Consultar Calificaciones")
     print("11. Generar reporte")
-    print("12. Salir del programa")
+    print("12. Ver Información (Estudiante/Instructor)")
+    print("13. Salir del programa")
     menu_option = input("Ingrese el número de la opción que quiera ingresar: ")
     print()
     match menu_option:
@@ -442,13 +586,33 @@ while True:
             crear_curso.registrar_curso()
             print()
         case "2":
+            print("Administrar Curso")
+            print("1. Eliminar Estudiante/Instructor")
+            print("2. Cambiar nombre al curso")
+            print("3 Cambiar ID al curso")
+            print("4. Cancelar administración")
+            menu_option4 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
+            match menu_option4:
+                case "1":
+                    print("Eliminar Estudiante/Instructor")
+                    administrar_cursos.eliminar_usuario()
+                    print()
+                case "2":
+                    print("Cambiar nombre al curso")
+                    administrar_cursos.cambiar_nombre()
+                    print()
+                case "3":
+                    print("Cambiar ID al curso")
+
+                case "4":
+                    print("Cancelando intento administrativo")
         case "3":
             print("Registrar Usuario")
             print("1. Registrar Estudiante")
             print("2. Registrar Instructor")
             print("3. Cancelar Registro")
-            menu_option2 = input("Ingrese el número de la opción que quiera reealizar: ")
+            menu_option2 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option2:
                 case "1":
@@ -505,8 +669,14 @@ while True:
             consultar_calificaciones.consultar_calificaciones()
             print()
         case "11":
+            print("Generar reporte")
+            crear_reporte.registrar_reporte()
             print()
         case "12":
+            print("Ver información")
+            ver_informacion.ver_informacion()
+            print()
+        case "13":
             print("Gracias por usar el programa.")
             break
         case _:
