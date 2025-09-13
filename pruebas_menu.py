@@ -172,9 +172,9 @@ class AsignarCurso:
         self.manejo = manejo
 
     def asignar_curso(self):
-        id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+        id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ")
         if id_busqueda not in self.manejo.usuarios:
-            print("Error: El estudiante con ese carnet no existe.")
+            print("Error: El usuario con ese carnet no existe.")
             return
         print("\nCursos disponibles:")
         if not self.manejo.cursos:
@@ -192,7 +192,7 @@ class AsignarCurso:
                     estudiante['cursos'].append(curso_id)
                     cursos_asignados.append(self.manejo.cursos[curso_id]['nombre'])
                 else:
-                    print(f"Advertencia: El estudiante ya está inscrito en el curso con ID {curso_id}.")
+                    print(f"Advertencia: El usuario ya está inscrito en el curso con ID {curso_id}.")
             else:
                 print(f"Error: El curso con ID {curso_id} no existe.")
         print(f"\nSe han asignado {len(cursos_asignados)} curso(s) exitosamente a {estudiante['nombre']}.")
@@ -274,7 +274,11 @@ class AsignarNota:
         print(f"\nAsignando notas para la actividad '{nombre_actividad}':")
         for estudiante in estudiantes_inscritos:
             try:
-                id_estudiante = next(key for key, value in self.manejo.usuarios.items() if value == estudiante)
+                id_estudiante = None
+                for clave, valor in self.manejo.usuarios.items():
+                    if valor == estudiante:
+                        id_estudiante = clave
+                        break
                 nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
                 clave_nota = f"{id_estudiante}-{clave}"
                 self.manejo.guardar_notas(clave_nota, {'nota': nota, 'id_estudiante': id_estudiante,'nombre_actividad': nombre_actividad})
@@ -318,6 +322,94 @@ class ConsultarCurso:
         else:
             print("No hay estudiantes inscritos en este curso.")
 
+
+class ConsultarEstudiantes:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_estudiantes(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos registrados.")
+            return
+
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+
+        id_curso = input("\nIngrese el ID del curso para ver los estudiantes inscritos: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+
+        estudiantes = []
+        for id, datos in self.manejo.usuarios.items():
+            if datos['rol'] == 'Estudiante' and id_curso in datos['cursos']:
+                estudiantes.append((id, datos['nombre']))
+
+        print(f"\n--- Estudiantes inscritos en el curso '{self.manejo.cursos[id_curso]['nombre']}' ---")
+        if estudiantes:
+            for carnet, nombre in estudiantes:
+                print(f"- {nombre} (Carnet: {carnet})")
+        else:
+            print("No hay estudiantes inscritos en este curso.")
+
+class ConsultarCalificaciones:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_calificaciones(self):
+        estudiantes = []
+        for id, datos in self.manejo.usuarios.items():
+            if datos['rol'] == 'Estudiante':
+                estudiantes.append((id, datos['nombre']))
+        if not estudiantes:
+            print("No hay estudiantes registrados.")
+            return
+
+        print("Estudiantes registrados:")
+        for id, nombre in estudiantes:
+            print(f"- {nombre} (Carnet: {id})")
+
+        id_estudiante = input("\nIngrese el carnet del estudiante: ")
+        if id_estudiante not in self.manejo.usuarios or self.manejo.usuarios[id_estudiante]['rol'] != 'Estudiante':
+            print("Estudiante no encontrado.")
+            return
+
+        print(f"\n--- Calificaciones de {self.manejo.usuarios[id_estudiante]['nombre']} ---")
+        notas_encontradas = False
+        for clave, datos_nota in self.manejo.notas.items():
+            if datos_nota['id_estudiante'] == id_estudiante:
+                print(f"{datos_nota['nombre_actividad']}: {datos_nota['nota']}")
+                notas_encontradas = True
+
+        if not notas_encontradas:
+            print("No hay calificaciones registradas para este estudiante.")
+
+class ConsultarActividad:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_actividad(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos registrados.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_curso = input("\nIngrese el ID del curso para ver sus actividades: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+        actividades_encontradas = [actividad for actividad in self.manejo.actividades.values() if actividad['curso_id'] == id_curso]
+        print(f"\n--- Actividades del curso '{self.manejo.cursos[id_curso]['nombre']}' ---")
+        if actividades_encontradas:
+            for actividad in actividades_encontradas:
+                print(f"  - Nombre: {actividad['nombre']}")
+                print(f"    Descripción: {actividad['descripcion']}")
+        else:
+            print("No hay actividades registradas para este curso.")
+
+
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
 crear_usuario = CrearUsuario(manejo)
@@ -325,12 +417,15 @@ asignar_curso = AsignarCurso(manejo)
 asignar_actividad = CrearActividad(manejo)
 asignar_nota = AsignarNota(manejo)
 consultar_curso = ConsultarCurso(manejo)
+consultar_estudiantes = ConsultarEstudiantes(manejo)
+consultar_calificaciones = ConsultarCalificaciones(manejo)
+consultar_actividad = ConsultarActividad(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
     print("2. Administrar Curso")
     print("3. Registrar Usuario (Estudiante/Instructor)")#Realizar sub-menú
-    print("4. Asignar Curso Estudiante")
+    print("4. Asignar Curso (Estudiante/Instructor)")
     print("5. Crear Tarea o Evaluación")
     print("6. Registrar nota (Tarea/Evaluación)") #Realizar sub-menú
     print("7. Consultar Curso")
@@ -398,10 +493,16 @@ while True:
             consultar_curso.consultar_curso()
             print()
         case "8":
+            print("Consultar Estudiantes Inscritos")
+            consultar_estudiantes.consultar_estudiantes()
             print()
         case "9":
+            print("Consultar Tarea/Evaluación")
+            consultar_actividad.consultar_actividad()
             print()
         case "10":
+            print("Consultar calificaciones")
+            consultar_calificaciones.consultar_calificaciones()
             print()
         case "11":
             print()
