@@ -172,9 +172,9 @@ class AsignarCurso:
         self.manejo = manejo
 
     def asignar_curso(self):
-        id_busqueda = input("Ingrese el carnet del estudiante a asignar: ")
+        id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ")
         if id_busqueda not in self.manejo.usuarios:
-            print("Error: El estudiante con ese carnet no existe.")
+            print("Error: El usuario con ese carnet no existe.")
             return
         print("\nCursos disponibles:")
         if not self.manejo.cursos:
@@ -192,7 +192,7 @@ class AsignarCurso:
                     estudiante['cursos'].append(curso_id)
                     cursos_asignados.append(self.manejo.cursos[curso_id]['nombre'])
                 else:
-                    print(f"Advertencia: El estudiante ya está inscrito en el curso con ID {curso_id}.")
+                    print(f"Advertencia: El usuario ya está inscrito en el curso con ID {curso_id}.")
             else:
                 print(f"Error: El curso con ID {curso_id} no existe.")
         print(f"\nSe han asignado {len(cursos_asignados)} curso(s) exitosamente a {estudiante['nombre']}.")
@@ -400,7 +400,7 @@ while True:
     print("1. Crear Curso")
     print("2. Administrar Curso")
     print("3. Registrar Usuario (Estudiante/Instructor)")#Realizar sub-menú
-    print("4. Asignar Curso Estudiante")
+    print("4. Asignar Curso (Estudiante/Instructor)")
     print("5. Crear Tarea o Evaluación")
     print("6. Registrar nota (Tarea/Evaluación)") #Realizar sub-menú
     print("7. Consultar Curso")
