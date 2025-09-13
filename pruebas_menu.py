@@ -385,6 +385,30 @@ class ConsultarCalificaciones:
         if not notas_encontradas:
             print("No hay calificaciones registradas para este estudiante.")
 
+class ConsultarActividad:
+    def __init__(self, manejo):
+        self.manejo = manejo
+
+    def consultar_actividad(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos registrados.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_curso = input("\nIngrese el ID del curso para ver sus actividades: ")
+        if id_curso not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+        actividades_encontradas = [actividad for actividad in self.manejo.actividades.values() if actividad['curso_id'] == id_curso]
+        print(f"\n--- Actividades del curso '{self.manejo.cursos[id_curso]['nombre']}' ---")
+        if actividades_encontradas:
+            for actividad in actividades_encontradas:
+                print(f"  - Nombre: {actividad['nombre']}")
+                print(f"    Descripción: {actividad['descripcion']}")
+        else:
+            print("No hay actividades registradas para este curso.")
+
 
 manejo = Informacion()
 crear_curso = CrearCurso(manejo)
@@ -393,8 +417,9 @@ asignar_curso = AsignarCurso(manejo)
 asignar_actividad = CrearActividad(manejo)
 asignar_nota = AsignarNota(manejo)
 consultar_curso = ConsultarCurso(manejo)
-consultar_estudiantes= ConsultarEstudiantes(manejo)
-consultar_calificaciones=ConsultarCalificaciones(manejo)
+consultar_estudiantes = ConsultarEstudiantes(manejo)
+consultar_calificaciones = ConsultarCalificaciones(manejo)
+consultar_actividad = ConsultarActividad(manejo)
 while True:
     print("---- Menú ----")
     print("1. Crear Curso")
@@ -472,6 +497,8 @@ while True:
             consultar_estudiantes.consultar_estudiantes()
             print()
         case "9":
+            print("Consultar Tarea/Evaluación")
+            consultar_actividad.consultar_actividad()
             print()
         case "10":
             print("Consultar calificaciones")
