@@ -170,7 +170,7 @@ class CrearCurso:
                 if not nombre_curso.strip():
                     raise ValueError("El nombre no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}")
+                print(f"Erro: {e}\n")
             else:
                 break
         while True:
@@ -179,7 +179,7 @@ class CrearCurso:
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}")
+                print(f"Erro: {e}\n")
             else:
                 break
         datos_curso = {'nombre': nombre_curso, 'ID': id_curso}
@@ -198,8 +198,15 @@ class AdministrarCurso:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
-
+        while True:
+            try:
+                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
+                if not id_curso.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Erro: {e}\n")
+            else:
+                break
         if id_curso not in self.manejo.cursos:
             print("Error: El curso con ese ID no existe.")
             return
@@ -213,7 +220,15 @@ class AdministrarCurso:
             return
         for id_usuario, nombre_usuario in usuarios_en_curso:
             print(f"- {nombre_usuario} (ID: {id_usuario})")
-        id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ")
+        while True:
+            try:
+                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ")
+                if not id_usuario.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e} \n")
+            else:
+                break
         if id_usuario not in self.manejo.usuarios:
             print("Error: El usuario con ese ID no existe.")
             return
@@ -231,11 +246,27 @@ class AdministrarCurso:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ")
+        while True:
+            try:
+                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ")
+                if not id_curso.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Erro: {e}\n ")
+            else:
+                break
         if id_curso not in self.manejo.cursos:
             print("Error: El curso con ese ID no existe.")
             return
-        nuevo_nombre = input("Ingrese el nuevo nombre para el curso: ")
+        while True:
+            try:
+                nuevo_nombre = input("Ingrese el nuevo nombre para el curso: ")
+                if not nuevo_nombre.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            else:
+                break
         self.manejo.cursos[id_curso]['nombre'] = nuevo_nombre
         print(f"El nombre del curso con ID '{id_curso}' ha sido cambiado a '{nuevo_nombre}' exitosamente.")
 
@@ -246,7 +277,15 @@ class AdministrarCurso:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        id_actual = input("\nIngrese el ID actual del curso: ")
+        while True:
+            try:
+                id_actual = input("\nIngrese el ID actual del curso: ")
+                if not id_actual.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Erro: {e}\n")
+            else:
+                break
         if id_actual not in self.manejo.cursos:
             print("Error: El curso con ese ID no existe.")
             return
