@@ -164,8 +164,24 @@ class CrearCurso:
         self.manejo = manejo
 
     def registrar_curso(self):
-        nombre_curso = input("Ingrese el nombre del curso: ")
-        id_curso = input("Ingresee el ID del curso: ")
+        while True:
+            try:
+                nombre_curso = input("Ingrese el nombre del curso: ")
+                if not nombre_curso.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Erro: {e}")
+            else:
+                break
+        while True:
+            try:
+                id_curso = input("Ingresee el ID del curso: ")
+                if not id_curso.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Erro: {e}")
+            else:
+                break
         datos_curso = {'nombre': nombre_curso, 'ID': id_curso}
         self.manejo.guardar_cursos(id_curso, datos_curso)
         print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
@@ -182,6 +198,7 @@ class AdministrarCurso:
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
+
         if id_curso not in self.manejo.cursos:
             print("Error: El curso con ese ID no existe.")
             return
