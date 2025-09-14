@@ -121,6 +121,7 @@ class Instructor(Usuario):
         print(f"Facultad: {self.facultad}")
         print(f"Cursos acargos: {self.cursos}")
 
+
 class Curso:
     def __init__(self, nombre, id):
         self.__nombre = nombre
