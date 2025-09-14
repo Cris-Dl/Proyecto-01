@@ -220,6 +220,43 @@ class AdministrarCurso:
         self.manejo.cursos[id_curso]['nombre'] = nuevo_nombre
         print(f"El nombre del curso con ID '{id_curso}' ha sido cambiado a '{nuevo_nombre}' exitosamente.")
 
+    def cambiar_id(self):
+        print("Cursos disponibles:")
+        if not self.manejo.cursos:
+            print("No hay cursos creados.")
+            return
+        for id, curso in self.manejo.cursos.items():
+            print(f"- ID: {id} | Nombre: {curso['nombre']}")
+        id_actual = input("\nIngrese el ID actual del curso: ")
+        if id_actual not in self.manejo.cursos:
+            print("Error: El curso con ese ID no existe.")
+            return
+        nuevo_id = input("Ingrese el nuevo ID para el curso: ")
+        if nuevo_id in self.manejo.cursos:
+            print("Error: Ya existe un curso con ese ID.")
+            return
+        curso_datos = self.manejo.cursos[id_actual].copy()
+        curso_datos['ID'] = nuevo_id
+        self.manejo.cursos[nuevo_id] = curso_datos
+        for usuario in self.manejo.usuarios.values():
+            if id_actual in usuario['cursos']:
+                usuario['cursos'].remove(id_actual)
+                usuario['cursos'].append(nuevo_id)
+        for actividad in self.manejo.actividades.values():
+            if actividad['curso_id'] == id_actual:
+                actividad['curso_id'] = nuevo_id
+        actividades_a_cambiar = {}
+        for clave, actividad in self.manejo.actividades.items():
+            partes = clave.split("-", 1)  # Divide en máximo 2 partes
+            if len(partes) == 2 and partes[0] == id_actual:
+                nueva_clave = nuevo_id + "-" + partes[1]
+                actividades_a_cambiar[clave] = nueva_clave
+        for clave_vieja, clave_nueva in actividades_a_cambiar.items():
+            self.manejo.actividades[clave_nueva] = self.manejo.actividades[clave_vieja]
+            del self.manejo.actividades[clave_vieja]
+        del self.manejo.cursos[id_actual]
+        print(f"El ID del curso ha sido cambiado de '{id_actual}' a '{nuevo_id}' exitosamente.")
+
 class CrearUsuario:
     def __init__(self, manejo):
         super().__init__()
@@ -604,7 +641,8 @@ while True:
                     print()
                 case "3":
                     print("Cambiar ID al curso")
-
+                    administrar_cursos.cambiar_id()
+                    print()
                 case "4":
                     print("Cancelando intento administrativo")
         case "3":
