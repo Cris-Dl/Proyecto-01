@@ -186,6 +186,7 @@ class CrearCurso:
         self.manejo.guardar_cursos(id_curso, datos_curso)
         print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
 
+
 class AdministrarCurso:
     def __init__(self, manejo):
         self.manejo = manejo
