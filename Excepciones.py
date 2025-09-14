@@ -474,12 +474,42 @@ class CrearActividad:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        while True:
+            try:
+                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+                if not curso_id.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
-        nombre_tarea = input("Ingrese el nombre de la tarea: ").upper()
-        descripcion_tarea = input("Describa el contenido de la tarea: ")
+        while True:
+            try:
+                nombre_tarea = input("Ingrese el nombre de la tarea: ").upper()
+                if not nombre_tarea.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
+        while True:
+            try:
+                descripcion_tarea = input("Describa el contenido de la tarea: ")
+                if not descripcion_tarea.strip():
+                    raise ValueError("La descripcion no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         tarea_info = {'nombre': nombre_tarea, 'descripcion': descripcion_tarea, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_tarea}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
@@ -496,8 +526,28 @@ class CrearActividad:
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
-        nombre_evaluacion = input("Ingrese el nombre del tipo de evaluación: ").upper()
-        descripcion_evaluacion = input("Describa el contenido de la evalución: ")
+        while True:
+            try:
+                nombre_evaluacion = input("Ingrese el nombre del tipo de evaluación: ").upper()
+                if not nombre_evaluacion.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
+        while True:
+            try:
+                descripcion_evaluacion = input("Describa el contenido de la evalución: ")
+                if not descripcion_evaluacion.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         tarea_info = {'nombre': nombre_evaluacion, 'descripcion': descripcion_evaluacion, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_evaluacion}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
