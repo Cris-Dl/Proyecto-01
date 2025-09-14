@@ -565,7 +565,17 @@ class AsignarNota:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        id_curso = input("\nIngrese el ID del curso: ")
+        while True:
+            try:
+                id_curso = input("\nIngrese el ID del curso: ")
+                if not id_curso.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         if id_curso not in self.manejo.cursos:
             print("Error: El curso no existe.")
             return
@@ -576,7 +586,17 @@ class AsignarNota:
         print("\nActividades disponibles en el curso:")
         for actividad in actividades:
             print(f"- {actividad['nombre']} ({actividad['descripcion']})")
-        nombre_actividad = input("\nIngrese el nombre de la actividad a calificar: ").upper()
+        while True:
+            try:
+                nombre_actividad = input("\nIngrese el nombre de la actividad a calificar: ").upper()
+                if not nombre_actividad.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         clave = f"{id_curso}-{nombre_actividad}"
         if clave not in self.manejo.actividades:
             print("Error: La actividad no se encontró en este curso.")
@@ -593,7 +613,23 @@ class AsignarNota:
                     if valor == estudiante:
                         id_estudiante = clave
                         break
-                nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
+                while True:
+                    try:
+                        nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
+                        if nota < 0 :
+                            print("la nota no puede ser menor a 0")
+                            return
+                        if nota > 100:
+                            print("La nota no puede ser menor a 0")
+                            return
+                        if not nota:
+                            print("Error nota no puede quedar vacia")
+                    except ValueError:
+                        print(f"Error la nota solo puede ser un numeor valido\n")
+                    except Exception as e:
+                        print(f"Ocurrio un error {e}")
+                    else:
+                        break
                 clave_nota = f"{id_estudiante}-{clave}"
                 self.manejo.guardar_notas(clave_nota, {'nota': nota, 'id_estudiante': id_estudiante,'nombre_actividad': nombre_actividad})
                 print(f"Nota de {nota} registrada para {estudiante['nombre']}.")
