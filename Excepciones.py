@@ -541,7 +541,7 @@ class CrearActividad:
             try:
                 descripcion_evaluacion = input("Describa el contenido de la evalución: ")
                 if not descripcion_evaluacion.strip():
-                    raise ValueError("El nombre no puede quedar vacio")
+                    raise ValueError("La descripcion no puede quedar vacio")
             except ValueError as e:
                 print(f"Error: {e}\n ")
             except Exception as e:
