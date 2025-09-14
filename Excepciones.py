@@ -303,7 +303,7 @@ class AdministrarCurso:
             try:
                 nuevo_id = input("Ingrese el nuevo ID para el curso: ")
                 if not nuevo_id.strip():
-                    raise ValueError("El nombre no puede quedar vacio")
+                    raise ValueError("El id no puede quedar vacio ")
             except ValueError as e:
                 print(f"Error: {e}\n ")
             except Exception as e:
@@ -341,10 +341,40 @@ class CrearUsuario:
         self.manejo = manejo
 
     def registrar_estudiante(self):
-        nombre = input("Ingrese el nombre del estudiante: ")
+        while True:
+            try:
+                nombre = input("Ingrese el nombre del estudiante: ")
+                if not nombre.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         rol = "Estudiante"
-        id = input("Ingrese el carnet del estudiante: ")
-        carrera = input("Ingrese la carrera que pertenece el estudiante: ")
+        while True:
+            try:
+                id = input("Ingrese el carnet del estudiante: ")
+                if not id.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
+        while True:
+            try:
+                carrera = input("Ingrese la carrera que pertenece el estudiante: ")
+                if not carrera.strip():
+                    raise ValueError("El nombre de la carrera no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         cursos_inscritos = []
         reportes = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos, reportes)
@@ -352,10 +382,40 @@ class CrearUsuario:
         print(f"\nEstudiante '{nombre}' registrado con éxito.")
 
     def registrar_instructor(self):
-        nombre = input("Ingrese el nombre del instructor: ")
+        while True:
+            try:
+                nombre = input("Ingrese el nombre del instructor: ")
+                if not nombre.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         rol = "Instructor"
-        id = input("Ingrese el ID del instructor: ")
-        facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
+        while True:
+            try:
+                id = input("Ingrese el ID del instructor: ")
+                if not id.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
+        while True:
+            try:
+                facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
+                if not facultad.strip():
+                    raise ValueError("El nombre de la facultad no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         cursos_asignados = []
         nuevo_instructor = Instructor(nombre, rol, id, facultad, cursos_asignados)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_instructor.nombre,'rol': nuevo_instructor.rol,'facultad': nuevo_instructor.facultad,'cursos':nuevo_instructor.cursos})
