@@ -426,7 +426,17 @@ class AsignarCurso:
         self.manejo = manejo
 
     def asignar_curso(self):
-        id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ")
+        while True:
+            try:
+                id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ")
+                if not id_busqueda.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         if id_busqueda not in self.manejo.usuarios:
             print("Error: El usuario con ese carnet no existe.")
             return
