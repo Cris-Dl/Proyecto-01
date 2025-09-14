@@ -205,6 +205,8 @@ class AdministrarCurso:
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
                 print(f"Erro: {e}\n")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         if id_curso not in self.manejo.cursos:
@@ -227,6 +229,8 @@ class AdministrarCurso:
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
                 print(f"Error: {e} \n")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         if id_usuario not in self.manejo.usuarios:
@@ -253,6 +257,8 @@ class AdministrarCurso:
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
                 print(f"Erro: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         if id_curso not in self.manejo.cursos:
@@ -265,6 +271,8 @@ class AdministrarCurso:
                     raise ValueError("El nombre no puede quedar vacio")
             except ValueError as e:
                 print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         self.manejo.cursos[id_curso]['nombre'] = nuevo_nombre
@@ -283,13 +291,25 @@ class AdministrarCurso:
                 if not id_actual.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}\n")
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         if id_actual not in self.manejo.cursos:
             print("Error: El curso con ese ID no existe.")
             return
-        nuevo_id = input("Ingrese el nuevo ID para el curso: ")
+        while True:
+            try:
+                nuevo_id = input("Ingrese el nuevo ID para el curso: ")
+                if not nuevo_id.strip():
+                    raise ValueError("El nombre no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n ")
+            except Exception as e:
+                print("Ocurrió un error:", e)
+            else:
+                break
         if nuevo_id in self.manejo.cursos:
             print("Error: Ya existe un curso con ese ID.")
             return
