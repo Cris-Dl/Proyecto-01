@@ -739,8 +739,17 @@ class ConsultarCalificaciones:
         print("Estudiantes registrados:")
         for id, nombre in estudiantes:
             print(f"- {nombre} (Carnet: {id})")
-
-        id_estudiante = input("\nIngrese el carnet del estudiante: ")
+        while True:
+            try:
+                id_estudiante = input("\nIngrese el carnet del estudiante: ")
+                if not id_estudiante.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print(f"Error: {e}\n")
+            else:
+                break
         if id_estudiante not in self.manejo.usuarios or self.manejo.usuarios[id_estudiante]['rol'] != 'Estudiante':
             print("Estudiante no encontrado.")
             return
