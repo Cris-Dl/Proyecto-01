@@ -176,6 +176,9 @@ class CrearCurso:
         while True:
             try:
                 id_curso = input("Ingresee el ID del curso: ")
+                if id_curso in self.manejo.cursos:
+                    print(f"El id {id_curso} ya se encuentra registrado")
+                    return
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -356,6 +359,9 @@ class CrearUsuario:
         while True:
             try:
                 id = input("Ingrese el carnet del estudiante: ")
+                if id in self.manejo.usuarios:
+                    print(f"El id {id} ya se encuentra registrado")
+                    return
                 if not id.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -397,6 +403,9 @@ class CrearUsuario:
         while True:
             try:
                 id = input("Ingrese el ID del instructor: ")
+                if id in self.manejo.usuarios:
+                    print(f"El id {id} ya se encuentra registrado")
+                    return
                 if not id.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
