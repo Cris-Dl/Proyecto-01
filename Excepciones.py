@@ -813,7 +813,17 @@ class Reportes:
         print("\nEstudiantes disponibles:")
         for id, nombre in estudiantes:
             print(f"- {nombre} (Carnet: {id})")
-        id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ")
+        while True:
+            try:
+                id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ")
+                if not id_estudiante.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print(f"Error: {e}\n")
+            else:
+                break
         if id_estudiante not in self.manejo.usuarios or self.manejo.usuarios[id_estudiante]['rol'] != 'Estudiante':
             print("Error: Estudiante no encontrado.")
             return
@@ -829,7 +839,17 @@ class Reportes:
                 print(f"  - {nombre_curso} (ID: {curso_id})")
         else:
             print("  No está inscrito en ningún curso.")
-        descripcion_reporte = input("\nPor favor, ingrese una descripción del desempeño del estudiante:\n")
+        while True:
+            try:
+                descripcion_reporte = input("\nPor favor, ingrese una descripción del desempeño del estudiante:\n")
+                if not descripcion_reporte.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print(f"Error: {e}\n")
+            else:
+                break
         reporte_guardar = {'fecha': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'descripcion': descripcion_reporte}
         estudiante_info['reportes'].append(reporte_guardar)
         print("\nReporte descriptivo generado y guardado con éxito.")
