@@ -859,7 +859,17 @@ class VerInfo:
         self.manejo = manejo
 
     def ver_informacion(self):
-        id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ")
+        while True:
+            try:
+                id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ")
+                if not id_busqueda.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print(f"Error: {e}\n")
+            else:
+                break
         if id_busqueda not in self.manejo.usuarios:
             print("Error: El usuario no existe en la base de datos.")
             return
