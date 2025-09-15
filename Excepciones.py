@@ -957,6 +957,8 @@ while True:
                     print()
                 case "4":
                     print("Cancelando intento administrativo")
+                case _:
+                    print("Error, ingrese datos validos")
         case "3":
             print("Registrar Usuario")
             print("1. Registrar Estudiante")
@@ -976,6 +978,8 @@ while True:
                 case "3":
                     print("Se ha cancelado el registro")
                     print()
+                case _:
+                    print("Ingrese datos validos")
         case "4":
             print("Asignar Curso")
             asignar_curso.asignar_curso()
@@ -998,6 +1002,8 @@ while True:
                     print()
                 case "3":
                     print("Cancelando creación de actividad")
+                case _:
+                    print("Ingrese un dato valido")
         case "6":
             print("Asignar nota")
             asignar_nota.asignar_nota()
