@@ -775,7 +775,17 @@ class ConsultarActividad:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        id_curso = input("\nIngrese el ID del curso para ver sus actividades: ")
+        while True:
+            try:
+                id_curso = input("\nIngrese el ID del curso para ver sus actividades: ")
+                if not id_curso.strip():
+                    raise ValueError("El id no puede quedar vacio")
+            except ValueError as e:
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print(f"Error: {e}\n")
+            else:
+                break
         if id_curso not in self.manejo.cursos:
             print("Error: El curso con ese ID no existe.")
             return
