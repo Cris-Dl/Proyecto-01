@@ -170,7 +170,9 @@ class CrearCurso:
                 if not nombre_curso.strip():
                     raise ValueError("El nombre no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}\n")
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         while True:
@@ -182,7 +184,9 @@ class CrearCurso:
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}\n")
+                print(f"Error: {e}\n")
+            except Exception as e:
+                print("Ocurrió un error:", e)
             else:
                 break
         datos_curso = {'nombre': nombre_curso, 'ID': id_curso}
@@ -207,7 +211,7 @@ class AdministrarCurso:
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}\n")
+                print(f"Error: {e}\n")
             except Exception as e:
                 print("Ocurrió un error:", e)
             else:
@@ -259,7 +263,7 @@ class AdministrarCurso:
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
-                print(f"Erro: {e}\n ")
+                print(f"Error: {e}\n ")
             except Exception as e:
                 print("Ocurrió un error:", e)
             else:
@@ -361,7 +365,7 @@ class CrearUsuario:
                 id = input("Ingrese el carnet del estudiante: ")
                 if id in self.manejo.usuarios:
                     print(f"El id {id} ya se encuentra registrado")
-                    return
+                    continue
                 if not id.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -405,7 +409,7 @@ class CrearUsuario:
                 id = input("Ingrese el ID del instructor: ")
                 if id in self.manejo.usuarios:
                     print(f"El id {id} ya se encuentra registrado")
-                    return
+                    continue
                 if not id.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -501,7 +505,7 @@ class CrearActividad:
             try:
                 nombre_tarea = input("Ingrese el nombre de la tarea: ").upper()
                 if not nombre_tarea.strip():
-                    raise ValueError("El nombre no puede quedar vacio")
+                    raise ValueError("El nombre de la tarea no puede quedar vacio")
             except ValueError as e:
                 print(f"Error: {e}\n ")
             except Exception as e:
@@ -512,7 +516,7 @@ class CrearActividad:
             try:
                 descripcion_tarea = input("Describa el contenido de la tarea: ")
                 if not descripcion_tarea.strip():
-                    raise ValueError("La descripcion no puede quedar vacio")
+                    raise ValueError("La descripcion no puede quedar vacia")
             except ValueError as e:
                 print(f"Error: {e}\n ")
             except Exception as e:
@@ -626,15 +630,16 @@ class AsignarNota:
                     try:
                         nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
                         if nota < 0 :
-                            print("la nota no puede ser menor a 0")
-                            return
+                            print(" Error la nota no puede ser menor a 0")
+                            continue
                         if nota > 100:
-                            print("La nota no puede ser menor a 0")
-                            return
+                            print(" Error La nota no puede ser mayor a 100")
+                            continue
                         if not nota:
-                            print("Error nota no puede quedar vacia")
+                            print("Error la nota no puede quedar vacia")
                     except ValueError:
                         print(f"Error la nota solo puede ser un numero valido\n")
+                        continue
                     except Exception as e:
                         print(f"Ocurrio un error {e}")
                     else:
@@ -852,7 +857,7 @@ class Reportes:
             try:
                 descripcion_reporte = input("\nPor favor, ingrese una descripción del desempeño del estudiante:\n")
                 if not descripcion_reporte.strip():
-                    raise ValueError("El id no puede quedar vacio")
+                    raise ValueError("la descripcion no puede quedar vacia")
             except ValueError as e:
                 print(f"Error: {e}\n")
             except Exception as e:
