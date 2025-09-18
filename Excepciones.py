@@ -531,7 +531,7 @@ class CrearActividad:
     def crear_evaluacion(self):
         print("Cursos disponibles:")
         if not self.manejo.cursos:
-            print("No hay cursos para asignar tareas.")
+            print("No hay cursos para asignar evaluaciones .")
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
