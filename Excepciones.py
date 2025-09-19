@@ -887,126 +887,138 @@ administrar_cursos = AdministrarCurso(manejo)
 ver_informacion = VerInfo(manejo)
 while True:
     print("---- Menú ----")
-    print("1. Crear Curso")
-    print("2. Administrar Curso")
-    print("3. Registrar Usuario (Estudiante/Instructor)")#Realizar sub-menú
-    print("4. Asignar Curso (Estudiante/Instructor)")
-    print("5. Crear Tarea o Evaluación")
-    print("6. Registrar nota (Tarea/Evaluación)") #Realizar sub-menú
-    print("7. Consultar Curso")
-    print("8. Consultar Estudiantes Inscritos")
-    print("9. Consultar Tarea o Evaluación") #Realizar sub-menú
-    print("10. Consultar Calificaciones")
-    print("11. Generar reporte")
-    print("12. Ver Información (Estudiante/Instructor)")
-    print("13. Salir del programa")
+    print("1. Crear")
+    print("2. Consultoria")
+    print("3. Administrar Cursos")
+    print("4. Generar Reporte")
+    print("5. Salir del Programa")
     menu_option = input("Ingrese el número de la opción que quiera ingresar: ")
     print()
     match menu_option:
         case "1":
-            print("Crear Curso")
-            crear_curso.registrar_curso()
-            print()
-        case "2":
-            print("Administrar Curso")
-            print("1. Eliminar Estudiante/Instructor")
-            print("2. Cambiar nombre al curso")
-            print("3 Cambiar ID al curso")
-            print("4. Cancelar administración")
-            menu_option4 = input("Ingrese el número de la opción que quiera realizar: ")
-            print()
-            match menu_option4:
-                case "1":
-                    print("Eliminar Estudiante/Instructor")
-                    administrar_cursos.eliminar_usuario()
-                    print()
-                case "2":
-                    print("Cambiar nombre al curso")
-                    administrar_cursos.cambiar_nombre()
-                    print()
-                case "3":
-                    print("Cambiar ID al curso")
-                    administrar_cursos.cambiar_id()
-                    print()
-                case "4":
-                    print("Cancelando intento administrativo")
-                case _:
-                    print("Error, ingrese datos validos")
-        case "3":
-            print("Registrar Usuario")
-            print("1. Registrar Estudiante")
-            print("2. Registrar Instructor")
-            print("3. Cancelar Registro")
+            print("Crear")
+            print("1. Crear Curso")
+            print("2. Crear Usuario")
+            print("3. Crear Actividad")
             menu_option2 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option2:
                 case "1":
-                    print("Registrar Estudiante")
-                    crear_usuario.registrar_estudiante()
+                    print("Crear Curso")
+                    crear_curso.registrar_curso()
                     print()
                 case "2":
-                    print("Registrar Instructor")
-                    crear_usuario.registrar_instructor()
+                    print("Crear Usuario")
+                    print("1. Registrar Estudiante")
+                    print("2. Registrar Instructor")
+                    menu_option02 = input("Ingrese el número de la opción que quiera realizar: ")
                     print()
+                    match menu_option02:
+                        case "1":
+                            print("Registrar Estudiante")
+                            crear_usuario.registrar_estudiante()
+                            print()
+                        case "2":
+                            print("Registrar Instructor")
+                            crear_usuario.registrar_instructor()
+                            print()
+                        case _:
+                            print("Valor invalido, vuelva a intentar")
+                            print()
                 case "3":
-                    print("Se ha cancelado el registro")
+                    print("Crear Actividad")
+                    print("1. Crear Tarea")
+                    print("2. Crear Evaluación")
+                    menu_option002 = input("Ingrese el número de la opción que quiera realizar: ")
                     print()
+                    match menu_option002:
+                        case "1":
+                            print("Crear Tarea")
+                            asignar_actividad.crear_tarea()
+                            print()
+                        case "2":
+                            print("Crear Evaluación")
+                            asignar_actividad.crear_evaluacion()
+                            print()
+                        case _:
+                            print("Vuelva a intentar")
+                            print()
                 case _:
-                    print("Ingrese datos validos")
-        case "4":
-            print("Asignar Curso")
-            asignar_curso.asignar_curso()
-            print()
-        case "5":
-            print("Crear Tarea o Evaluación")
-            print("1. Crear Tarea")
-            print("2. Crear Evaluación")
-            print("3. Cancelar Creación")
+                    print("Valor invalido, vuelva a intentar")
+                    print()
+        case "2":
+            print("Consultoria")
+            print("1. Consultar Curso")
+            print("2. Consultar Estudiantes Inscritos")
+            print("3. Consultar Actividades")
+            print("4. Consultar Calificaciones")
+            print("5. Consultar Información de Usuario")
             menu_option3 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option3:
                 case "1":
-                    print("Crear Tarea")
-                    asignar_actividad.crear_tarea()
+                    print("Consultar Curso")
+                    consultar_curso.consultar_curso()
                     print()
                 case "2":
-                    print("Crear Evaluación")
-                    asignar_actividad.crear_evaluacion()
+                    print("Consultar Estudiantes Inscritos")
+                    consultar_estudiantes.consultar_estudiantes()
                     print()
                 case "3":
-                    print("Cancelando creación de actividad")
+                    print("Consultar Actividades")
+                    consultar_actividad.consultar_actividad()
+                    print()
+                case "4":
+                    print("Consultar Calificaciones")
+                    consultar_calificaciones.consultar_calificaciones()
+                    print()
+                case "5":
+                    print("Consultar Información de Usuario")
+                    ver_informacion.ver_informacion()
+                    print()
                 case _:
-                    print("Ingrese un dato valido")
-        case "6":
-            print("Asignar nota")
-            asignar_nota.asignar_nota()
+                    print("Valor invalido, vuelva a intentar")
+                    print()
+        case "3":
+            print("Administrar Curso")
+            print("1. Asignar Curso a Usuario")
+            print("2. Registrar Nota a Estudiantes")
+            print("3. Eliminar Usuario de Algún Curso")
+            print("4. Cambiar de Nombre a un Curso")
+            print("5. Cambiar ID a un Curso")
+            menu_option4 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
-        case "7":
-            print("Consultar Curso")
-            consultar_curso.consultar_curso()
-            print()
-        case "8":
-            print("Consultar Estudiantes Inscritos")
-            consultar_estudiantes.consultar_estudiantes()
-            print()
-        case "9":
-            print("Consultar Tarea/Evaluación")
-            consultar_actividad.consultar_actividad()
-            print()
-        case "10":
-            print("Consultar calificaciones")
-            consultar_calificaciones.consultar_calificaciones()
-            print()
-        case "11":
-            print("Generar reporte")
+            match menu_option4:
+                case "1":
+                    print("Asignar Curso a Usuario")
+                    asignar_curso.asignar_curso()
+                    print()
+                case "2":
+                    print("Registrar Nota a Estudiantes")
+                    asignar_nota.asignar_nota()
+                    print()
+                case "3":
+                    print("Eliminar Usuario de Algún Curso")
+                    administrar_cursos.eliminar_usuario()
+                    print()
+                case "4":
+                    print("Cambiar de Nombre a un Curso")
+                    administrar_cursos.cambiar_nombre()
+                    print()
+                case "5":
+                    print("Cambiar ID a un Curso")
+                    administrar_cursos.cambiar_id()
+                    print()
+                case _:
+                    print("Valor invalido, vuelva a intentar")
+                    print()
+        case "4":
+            print("Generar Reporte")
             crear_reporte.registrar_reporte()
             print()
-        case "12":
-            print("Ver información")
-            ver_informacion.ver_informacion()
-            print()
-        case "13":
-            print("Gracias por usar el programa.")
+        case "5":
+            print("Saliendo del programa, gracias por su preferencia")
             break
         case _:
-            print("Valor invalido. Vuelva a intentar")
+            print("Valor invalido, vuelva a intentar")
+            print()
