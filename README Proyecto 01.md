@@ -20,7 +20,7 @@ Es un mini sistema escolar para registrar la información básica de alumnos, pr
 
 ## DOCUMENTACION
 
-[Manual de usuario](https://https://www.canva.com/design/DAGy_iVFJ_g/19FFAU0aEpM5iDMWN_IjyQ/edit)
+[Manual de usuario](https://www.canva.com/design/DAGy_iVFJ_g/19FFAU0aEpM5iDMWN_IjyQ/edit)
 
 [Pseudocodigo](https://drive.google.com/file/d/1uR2aAGb59e8_kXjSwLiJWNU9DmuvDdr8/view?usp=drive_link)
 
