@@ -213,7 +213,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
+                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -237,7 +237,7 @@ class AdministrarCurso:
             print(f"- {nombre_usuario} (ID: {id_usuario})")
         while True:
             try:
-                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ")
+                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ").upper()
                 if not id_usuario.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -272,7 +272,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ")
+                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -312,7 +312,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_actual = input("\nIngrese el ID actual del curso: ")
+                id_actual = input("\nIngrese el ID actual del curso: ").upper()
                 if not id_actual.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -326,7 +326,7 @@ class AdministrarCurso:
             return
         while True:
             try:
-                nuevo_id = input("Ingrese el nuevo ID para el curso: ")
+                nuevo_id = input("Ingrese el nuevo ID para el curso: ").upper()
                 if not nuevo_id.strip():
                     raise ValueError("El id no puede quedar vacio ")
             except ValueError as e:
