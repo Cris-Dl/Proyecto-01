@@ -158,6 +158,21 @@ class Informacion:
     def guardar_notas(self, clave, datos):
         self.notas[clave] = datos
 
+class Confirmacion:
+    def __init__(self):
+        self.respuesta = None
+
+    def pedir_confirmacion(self, mensaje):
+        while True:
+            respuesta = input(f"{mensaje} (s/n): ").strip().lower()
+            if respuesta == "s":
+                self.respuesta = True
+                return True
+            elif respuesta == "n":
+                self.respuesta = False
+                return False
+            else:
+                print("Respuesta inválida. Escribe 's' para sí o 'n' para no.")
 class CrearCurso:
     contador_curso = 0
     def __init__(self, manejo):
@@ -187,6 +202,7 @@ class CrearCurso:
 class AdministrarCurso:
     def __init__(self, manejo):
         self.manejo = manejo
+        self.confirmacion = Confirmacion()
 
     def eliminar_usuario(self):
         print("Cursos disponibles:")
@@ -197,7 +213,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ").upper()
+                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -221,7 +237,7 @@ class AdministrarCurso:
             print(f"- {nombre_usuario} (ID: {id_usuario})")
         while True:
             try:
-                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ").upper()
+                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ")
                 if not id_usuario.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -233,9 +249,17 @@ class AdministrarCurso:
         if id_usuario not in self.manejo.usuarios:
             print("Error: El usuario con ese ID no existe.")
             return
+        nombre_usuario = self.manejo.usuarios[id_usuario]['nombre']
+        nombre_curso = self.manejo.cursos[id_curso]['nombre']
+        mensaje = f"¿Está seguro que desea eliminar a '{nombre_usuario}' del curso '{nombre_curso}'? Esta acción no se puede deshacer"
+
+        if not self.confirmacion.pedir_confirmacion(mensaje):
+            print("Operación cancelada.")
+            return
         if id_curso in self.manejo.usuarios[id_usuario]['cursos']:
             self.manejo.usuarios[id_usuario]['cursos'].remove(id_curso)
-            print(f"El usuario '{self.manejo.usuarios[id_usuario]['nombre']}' ha sido eliminado del curso '{self.manejo.cursos[id_curso]['nombre']}' exitosamente.")
+            print(
+                f"El usuario '{self.manejo.usuarios[id_usuario]['nombre']}' ha sido eliminado del curso '{self.manejo.cursos[id_curso]['nombre']}' exitosamente.")
         else:
             print("Error: El usuario no está inscrito en este curso.")
 
@@ -248,7 +272,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ").upper()
+                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ")
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -271,6 +295,11 @@ class AdministrarCurso:
                 print("Ocurrió un error:", e)
             else:
                 break
+        mensaje = f"¿Está seguro que desea cambiar el nombre del curso a '{nuevo_nombre}'?"
+
+        if not self.confirmacion.pedir_confirmacion(mensaje):
+            print("Operación cancelada.")
+            return
         self.manejo.cursos[id_curso]['nombre'] = nuevo_nombre
         print(f"El nombre del curso con ID '{id_curso}' ha sido cambiado a '{nuevo_nombre}' exitosamente.")
 
@@ -283,7 +312,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_actual = input("\nIngrese el ID actual del curso: ").upper()
+                id_actual = input("\nIngrese el ID actual del curso: ")
                 if not id_actual.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -297,7 +326,7 @@ class AdministrarCurso:
             return
         while True:
             try:
-                nuevo_id = input("Ingrese el nuevo ID para el curso: ").upper()
+                nuevo_id = input("Ingrese el nuevo ID para el curso: ")
                 if not nuevo_id.strip():
                     raise ValueError("El id no puede quedar vacio ")
             except ValueError as e:
@@ -308,6 +337,13 @@ class AdministrarCurso:
                 break
         if nuevo_id in self.manejo.cursos:
             print("Error: Ya existe un curso con ese ID.")
+            return
+
+        nombre_curso = self.manejo.cursos[id_actual]['nombre']
+        mensaje = f"¿Está seguro que desea cambiar el ID del curso '{nombre_curso}' de '{id_actual}' a '{nuevo_id}'? Esta operación actualizará todas las referencias y no se puede deshacer"
+
+        if not self.confirmacion.pedir_confirmacion(mensaje):
+            print("Operación cancelada.")
             return
         curso_datos = self.manejo.cursos[id_actual].copy()
         curso_datos['ID'] = nuevo_id
@@ -900,6 +936,7 @@ while True:
             print("1. Crear Curso")
             print("2. Crear Usuario")
             print("3. Crear Actividad")
+            print("4. Cancelar creacion")
             menu_option2 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option2:
@@ -943,6 +980,8 @@ while True:
                         case _:
                             print("Vuelva a intentar")
                             print()
+                case "4":
+                    print("Cancelando Creación")
                 case _:
                     print("Valor invalido, vuelva a intentar")
                     print()
@@ -953,6 +992,7 @@ while True:
             print("3. Consultar Actividades")
             print("4. Consultar Calificaciones")
             print("5. Consultar Información de Usuario")
+            print("6. Cancelar consulta")
             menu_option3 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option3:
@@ -976,6 +1016,8 @@ while True:
                     print("Consultar Información de Usuario")
                     ver_informacion.ver_informacion()
                     print()
+                case "6":
+                    print("Cancelando Consulta...")
                 case _:
                     print("Valor invalido, vuelva a intentar")
                     print()
@@ -986,6 +1028,7 @@ while True:
             print("3. Eliminar Usuario de Algún Curso")
             print("4. Cambiar de Nombre a un Curso")
             print("5. Cambiar ID a un Curso")
+            print("6. Cancelar Administración")
             menu_option4 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option4:
@@ -1009,6 +1052,8 @@ while True:
                     print("Cambiar ID a un Curso")
                     administrar_cursos.cambiar_id()
                     print()
+                case "6":
+                    print("Cancelando adminitración...")
                 case _:
                     print("Valor invalido, vuelva a intentar")
                     print()
