@@ -258,20 +258,23 @@ class AdministrarCurso:
         print(f"El ID del curso ha sido cambiado de '{id_actual}' a '{nuevo_id}' exitosamente.")
 
 class CrearUsuario:
+    contador = 990
     def __init__(self, manejo):
         super().__init__()
         self.manejo = manejo
 
     def registrar_estudiante(self):
+        CrearUsuario.contador += 10
         nombre = input("Ingrese el nombre del estudiante: ")
         rol = "Estudiante"
-        id = input("Ingrese el carnet del estudiante: ")
+        letra = str(CrearUsuario.contador)
+        id = "EST" + letra
         carrera = input("Ingrese la carrera que pertenece el estudiante: ")
         cursos_inscritos = []
         reportes = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos, reportes)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos,'reportes': nuevo_estudiante.reportes})
-        print(f"\nEstudiante '{nombre}' registrado con éxito.")
+        print(f"\nEstudiante '{nombre}' con ID {id} registrado con éxito.")
 
     def registrar_instructor(self):
         nombre = input("Ingrese el nombre del instructor: ")

@@ -159,11 +159,13 @@ class Informacion:
         self.notas[clave] = datos
 
 class CrearCurso:
+    contador_curso = 0
     def __init__(self, manejo):
         super().__init__()
         self.manejo = manejo
 
     def registrar_curso(self):
+        CrearCurso.contador_curso += 2
         while True:
             try:
                 nombre_curso = input("Ingrese el nombre del curso: ")
@@ -175,20 +177,8 @@ class CrearCurso:
                 print("Ocurrió un error:", e)
             else:
                 break
-        while True:
-            try:
-                id_curso = input("Ingresee el ID del curso: ")
-                if id_curso in self.manejo.cursos:
-                    print(f"El id {id_curso} ya se encuentra registrado")
-                    return
-                if not id_curso.strip():
-                    raise ValueError("El id no puede quedar vacio")
-            except ValueError as e:
-                print(f"Error: {e}\n")
-            except Exception as e:
-                print("Ocurrió un error:", e)
-            else:
-                break
+        letra = str(CrearCurso.contador_curso)
+        id_curso = "CUR" + letra
         datos_curso = {'nombre': nombre_curso, 'ID': id_curso}
         self.manejo.guardar_cursos(id_curso, datos_curso)
         print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
@@ -207,7 +197,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ")
+                id_curso = input("\nIngrese el ID del curso del que desea eliminar a un usuario: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -231,7 +221,7 @@ class AdministrarCurso:
             print(f"- {nombre_usuario} (ID: {id_usuario})")
         while True:
             try:
-                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ")
+                id_usuario = input("\nIngrese el ID del usuario que desea eliminar del curso: ").upper()
                 if not id_usuario.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -245,8 +235,7 @@ class AdministrarCurso:
             return
         if id_curso in self.manejo.usuarios[id_usuario]['cursos']:
             self.manejo.usuarios[id_usuario]['cursos'].remove(id_curso)
-            print(
-                f"El usuario '{self.manejo.usuarios[id_usuario]['nombre']}' ha sido eliminado del curso '{self.manejo.cursos[id_curso]['nombre']}' exitosamente.")
+            print(f"El usuario '{self.manejo.usuarios[id_usuario]['nombre']}' ha sido eliminado del curso '{self.manejo.cursos[id_curso]['nombre']}' exitosamente.")
         else:
             print("Error: El usuario no está inscrito en este curso.")
 
@@ -259,7 +248,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ")
+                id_curso = input("\nIngrese el ID del curso al que desea cambiar el nombre: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -294,7 +283,7 @@ class AdministrarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_actual = input("\nIngrese el ID actual del curso: ")
+                id_actual = input("\nIngrese el ID actual del curso: ").upper()
                 if not id_actual.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -308,7 +297,7 @@ class AdministrarCurso:
             return
         while True:
             try:
-                nuevo_id = input("Ingrese el nuevo ID para el curso: ")
+                nuevo_id = input("Ingrese el nuevo ID para el curso: ").upper()
                 if not nuevo_id.strip():
                     raise ValueError("El id no puede quedar vacio ")
             except ValueError as e:
@@ -343,11 +332,14 @@ class AdministrarCurso:
         print(f"El ID del curso ha sido cambiado de '{id_actual}' a '{nuevo_id}' exitosamente.")
 
 class CrearUsuario:
+    contador_estudiante = 991
+    contador_instructor = 100
     def __init__(self, manejo):
         super().__init__()
         self.manejo = manejo
 
     def registrar_estudiante(self):
+        CrearUsuario.contador_estudiante += 9
         while True:
             try:
                 nombre = input("Ingrese el nombre del estudiante: ")
@@ -362,20 +354,6 @@ class CrearUsuario:
         rol = "Estudiante"
         while True:
             try:
-                id = input("Ingrese el carnet del estudiante: ")
-                if id in self.manejo.usuarios:
-                    print(f"El id {id} ya se encuentra registrado")
-                    continue
-                if not id.strip():
-                    raise ValueError("El id no puede quedar vacio")
-            except ValueError as e:
-                print(f"Error: {e}\n ")
-            except Exception as e:
-                print("Ocurrió un error:", e)
-            else:
-                break
-        while True:
-            try:
                 carrera = input("Ingrese la carrera que pertenece el estudiante: ")
                 if not carrera.strip():
                     raise ValueError("El nombre de la carrera no puede quedar vacio")
@@ -385,13 +363,16 @@ class CrearUsuario:
                 print("Ocurrió un error:", e)
             else:
                 break
+        letra = str(CrearUsuario.contador_estudiante)
+        id = "EST" + letra
         cursos_inscritos = []
         reportes = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos, reportes)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos,'reportes': nuevo_estudiante.reportes})
-        print(f"\nEstudiante '{nombre}' registrado con éxito.")
+        print(f"\nEstudiante '{nombre}' con el ID {id} registrado con éxito.")
 
     def registrar_instructor(self):
+        CrearUsuario.contador_instructor += 5
         while True:
             try:
                 nombre = input("Ingrese el nombre del instructor: ")
@@ -406,20 +387,6 @@ class CrearUsuario:
         rol = "Instructor"
         while True:
             try:
-                id = input("Ingrese el ID del instructor: ")
-                if id in self.manejo.usuarios:
-                    print(f"El id {id} ya se encuentra registrado")
-                    continue
-                if not id.strip():
-                    raise ValueError("El id no puede quedar vacio")
-            except ValueError as e:
-                print(f"Error: {e}\n ")
-            except Exception as e:
-                print("Ocurrió un error:", e)
-            else:
-                break
-        while True:
-            try:
                 facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
                 if not facultad.strip():
                     raise ValueError("El nombre de la facultad no puede quedar vacio")
@@ -429,10 +396,12 @@ class CrearUsuario:
                 print("Ocurrió un error:", e)
             else:
                 break
+        letra = str(CrearUsuario.contador_instructor)
+        id = "CAT" + letra
         cursos_asignados = []
         nuevo_instructor = Instructor(nombre, rol, id, facultad, cursos_asignados)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_instructor.nombre,'rol': nuevo_instructor.rol,'facultad': nuevo_instructor.facultad,'cursos':nuevo_instructor.cursos})
-        print(f"\nInstructor '{nombre}' registrado con éxito.")
+        print(f"\nInstructor '{nombre}' con el ID {id} registrado con éxito.")
 
 class AsignarCurso:
     def __init__(self, manejo):
@@ -441,7 +410,7 @@ class AsignarCurso:
     def asignar_curso(self):
         while True:
             try:
-                id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ")
+                id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ").upper()
                 if not id_busqueda.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -459,7 +428,7 @@ class AsignarCurso:
             return
         for curso_id, curso_info in self.manejo.cursos.items():
             print(f"- ID: {curso_id} | Nombre: {curso_info['nombre']}")
-        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ").upper()
         cursos = [id.strip() for id in curso_ids_str.split(',') if id.strip()]
         estudiante = self.manejo.usuarios[id_busqueda]
         cursos_asignados = []
@@ -489,7 +458,7 @@ class CrearActividad:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ").upper()
                 if not curso_id.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -535,7 +504,7 @@ class CrearActividad:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ").upper()
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
@@ -564,8 +533,7 @@ class CrearActividad:
         tarea_info = {'nombre': nombre_evaluacion, 'descripcion': descripcion_evaluacion, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_evaluacion}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
-        print(
-            f"\nTarea '{nombre_evaluacion}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
+        print(f"\nTarea '{nombre_evaluacion}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
 
 class AsignarNota:
     def __init__(self, manejo):
@@ -580,7 +548,7 @@ class AsignarNota:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso: ")
+                id_curso = input("\nIngrese el ID del curso: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -663,7 +631,7 @@ class ConsultarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso que desea consultar: ")
+                id_curso = input("\nIngrese el ID del curso que desea consultar: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -712,7 +680,7 @@ class ConsultarEstudiantes:
 
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso para ver los estudiantes inscritos: ")
+                id_curso = input("\nIngrese el ID del curso para ver los estudiantes inscritos: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -755,7 +723,7 @@ class ConsultarCalificaciones:
             print(f"- {nombre} (Carnet: {id})")
         while True:
             try:
-                id_estudiante = input("\nIngrese el carnet del estudiante: ")
+                id_estudiante = input("\nIngrese el carnet del estudiante: ").upper()
                 if not id_estudiante.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -791,7 +759,7 @@ class ConsultarActividad:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso para ver sus actividades: ")
+                id_curso = input("\nIngrese el ID del curso para ver sus actividades: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -829,7 +797,7 @@ class Reportes:
             print(f"- {nombre} (Carnet: {id})")
         while True:
             try:
-                id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ")
+                id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ").upper()
                 if not id_estudiante.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -875,7 +843,7 @@ class VerInfo:
     def ver_informacion(self):
         while True:
             try:
-                id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ")
+                id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ").upper()
                 if not id_busqueda.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
