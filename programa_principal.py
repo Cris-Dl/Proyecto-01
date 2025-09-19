@@ -158,12 +158,29 @@ class Informacion:
     def guardar_notas(self, clave, datos):
         self.notas[clave] = datos
 
+class Confirmacion:
+    def __init__(self):
+        self.respuesta = None
+
+    def pedir_confirmacion(self, mensaje):
+        while True:
+            respuesta = input(f"{mensaje} (s/n): ").strip().lower()
+            if respuesta == "s":
+                self.respuesta = True
+                return True
+            elif respuesta == "n":
+                self.respuesta = False
+                return False
+            else:
+                print("Respuesta inválida. Escribe 's' para sí o 'n' para no.")
 class CrearCurso:
+    contador_curso = 0
     def __init__(self, manejo):
         super().__init__()
         self.manejo = manejo
 
     def registrar_curso(self):
+        CrearCurso.contador_curso += 2
         while True:
             try:
                 nombre_curso = input("Ingrese el nombre del curso: ")
@@ -175,20 +192,8 @@ class CrearCurso:
                 print("Ocurrió un error:", e)
             else:
                 break
-        while True:
-            try:
-                id_curso = input("Ingresee el ID del curso: ")
-                if id_curso in self.manejo.cursos:
-                    print(f"El id {id_curso} ya se encuentra registrado")
-                    return
-                if not id_curso.strip():
-                    raise ValueError("El id no puede quedar vacio")
-            except ValueError as e:
-                print(f"Error: {e}\n")
-            except Exception as e:
-                print("Ocurrió un error:", e)
-            else:
-                break
+        letra = str(CrearCurso.contador_curso)
+        id_curso = "CUR" + letra
         datos_curso = {'nombre': nombre_curso, 'ID': id_curso}
         self.manejo.guardar_cursos(id_curso, datos_curso)
         print(f"Curso '{nombre_curso}' con ID '{id_curso}' ha sido creado exitosamente.")
@@ -197,6 +202,7 @@ class CrearCurso:
 class AdministrarCurso:
     def __init__(self, manejo):
         self.manejo = manejo
+        self.confirmacion = Confirmacion()
 
     def eliminar_usuario(self):
         print("Cursos disponibles:")
@@ -243,6 +249,13 @@ class AdministrarCurso:
         if id_usuario not in self.manejo.usuarios:
             print("Error: El usuario con ese ID no existe.")
             return
+        nombre_usuario = self.manejo.usuarios[id_usuario]['nombre']
+        nombre_curso = self.manejo.cursos[id_curso]['nombre']
+        mensaje = f"¿Está seguro que desea eliminar a '{nombre_usuario}' del curso '{nombre_curso}'? Esta acción no se puede deshacer"
+
+        if not self.confirmacion.pedir_confirmacion(mensaje):
+            print("Operación cancelada.")
+            return
         if id_curso in self.manejo.usuarios[id_usuario]['cursos']:
             self.manejo.usuarios[id_usuario]['cursos'].remove(id_curso)
             print(
@@ -282,6 +295,11 @@ class AdministrarCurso:
                 print("Ocurrió un error:", e)
             else:
                 break
+        mensaje = f"¿Está seguro que desea cambiar el nombre del curso a '{nuevo_nombre}'?"
+
+        if not self.confirmacion.pedir_confirmacion(mensaje):
+            print("Operación cancelada.")
+            return
         self.manejo.cursos[id_curso]['nombre'] = nuevo_nombre
         print(f"El nombre del curso con ID '{id_curso}' ha sido cambiado a '{nuevo_nombre}' exitosamente.")
 
@@ -320,6 +338,13 @@ class AdministrarCurso:
         if nuevo_id in self.manejo.cursos:
             print("Error: Ya existe un curso con ese ID.")
             return
+
+        nombre_curso = self.manejo.cursos[id_actual]['nombre']
+        mensaje = f"¿Está seguro que desea cambiar el ID del curso '{nombre_curso}' de '{id_actual}' a '{nuevo_id}'? Esta operación actualizará todas las referencias y no se puede deshacer"
+
+        if not self.confirmacion.pedir_confirmacion(mensaje):
+            print("Operación cancelada.")
+            return
         curso_datos = self.manejo.cursos[id_actual].copy()
         curso_datos['ID'] = nuevo_id
         self.manejo.cursos[nuevo_id] = curso_datos
@@ -343,11 +368,14 @@ class AdministrarCurso:
         print(f"El ID del curso ha sido cambiado de '{id_actual}' a '{nuevo_id}' exitosamente.")
 
 class CrearUsuario:
+    contador_estudiante = 991
+    contador_instructor = 100
     def __init__(self, manejo):
         super().__init__()
         self.manejo = manejo
 
     def registrar_estudiante(self):
+        CrearUsuario.contador_estudiante += 9
         while True:
             try:
                 nombre = input("Ingrese el nombre del estudiante: ")
@@ -362,20 +390,6 @@ class CrearUsuario:
         rol = "Estudiante"
         while True:
             try:
-                id = input("Ingrese el carnet del estudiante: ")
-                if id in self.manejo.usuarios:
-                    print(f"El id {id} ya se encuentra registrado")
-                    continue
-                if not id.strip():
-                    raise ValueError("El id no puede quedar vacio")
-            except ValueError as e:
-                print(f"Error: {e}\n ")
-            except Exception as e:
-                print("Ocurrió un error:", e)
-            else:
-                break
-        while True:
-            try:
                 carrera = input("Ingrese la carrera que pertenece el estudiante: ")
                 if not carrera.strip():
                     raise ValueError("El nombre de la carrera no puede quedar vacio")
@@ -385,13 +399,16 @@ class CrearUsuario:
                 print("Ocurrió un error:", e)
             else:
                 break
+        letra = str(CrearUsuario.contador_estudiante)
+        id = "EST" + letra
         cursos_inscritos = []
         reportes = []
         nuevo_estudiante = Estudiante(nombre, rol, id, carrera, cursos_inscritos, reportes)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_estudiante.nombre,'rol': nuevo_estudiante.rol,'carrera': nuevo_estudiante.carrera,'cursos': nuevo_estudiante.cursos,'reportes': nuevo_estudiante.reportes})
-        print(f"\nEstudiante '{nombre}' registrado con éxito.")
+        print(f"\nEstudiante '{nombre}' con el ID {id} registrado con éxito.")
 
     def registrar_instructor(self):
+        CrearUsuario.contador_instructor += 5
         while True:
             try:
                 nombre = input("Ingrese el nombre del instructor: ")
@@ -406,20 +423,6 @@ class CrearUsuario:
         rol = "Instructor"
         while True:
             try:
-                id = input("Ingrese el ID del instructor: ")
-                if id in self.manejo.usuarios:
-                    print(f"El id {id} ya se encuentra registrado")
-                    continue
-                if not id.strip():
-                    raise ValueError("El id no puede quedar vacio")
-            except ValueError as e:
-                print(f"Error: {e}\n ")
-            except Exception as e:
-                print("Ocurrió un error:", e)
-            else:
-                break
-        while True:
-            try:
                 facultad = input("Ingrese el nombre de la facultad que pertenece el instructor: ")
                 if not facultad.strip():
                     raise ValueError("El nombre de la facultad no puede quedar vacio")
@@ -429,10 +432,12 @@ class CrearUsuario:
                 print("Ocurrió un error:", e)
             else:
                 break
+        letra = str(CrearUsuario.contador_instructor)
+        id = "CAT" + letra
         cursos_asignados = []
         nuevo_instructor = Instructor(nombre, rol, id, facultad, cursos_asignados)
         self.manejo.guardar_usuarios(id, {'nombre': nuevo_instructor.nombre,'rol': nuevo_instructor.rol,'facultad': nuevo_instructor.facultad,'cursos':nuevo_instructor.cursos})
-        print(f"\nInstructor '{nombre}' registrado con éxito.")
+        print(f"\nInstructor '{nombre}' con el ID {id} registrado con éxito.")
 
 class AsignarCurso:
     def __init__(self, manejo):
@@ -441,7 +446,7 @@ class AsignarCurso:
     def asignar_curso(self):
         while True:
             try:
-                id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ")
+                id_busqueda = input("Ingrese el carnet del (Estudiante/Instructor) a asignar: ").upper()
                 if not id_busqueda.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -459,7 +464,7 @@ class AsignarCurso:
             return
         for curso_id, curso_info in self.manejo.cursos.items():
             print(f"- ID: {curso_id} | Nombre: {curso_info['nombre']}")
-        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ")
+        curso_ids_str = input("\nIngrese los IDs de los cursos a asignar (separados por comas): ").upper()
         cursos = [id.strip() for id in curso_ids_str.split(',') if id.strip()]
         estudiante = self.manejo.usuarios[id_busqueda]
         cursos_asignados = []
@@ -489,7 +494,7 @@ class CrearActividad:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+                curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ").upper()
                 if not curso_id.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -535,7 +540,7 @@ class CrearActividad:
             return
         for id, curso in self.manejo.cursos.items():
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
-        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ")
+        curso_id = input("\nIngrese el ID del curso al que pertenece la tarea: ").upper()
         if curso_id not in self.manejo.cursos:
             print(f"Error: El curso con ID {curso_id} no existe.")
             return
@@ -564,8 +569,7 @@ class CrearActividad:
         tarea_info = {'nombre': nombre_evaluacion, 'descripcion': descripcion_evaluacion, 'curso_id': curso_id}
         clave_actividad = f"{curso_id}-{nombre_evaluacion}"
         self.manejo.guardar_actividades(clave_actividad, tarea_info)
-        print(
-            f"\nTarea '{nombre_evaluacion}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
+        print(f"\nTarea '{nombre_evaluacion}' creada exitosamente y asignada al curso '{self.manejo.cursos[curso_id]['nombre']}'.")
 
 class AsignarNota:
     def __init__(self, manejo):
@@ -580,7 +584,7 @@ class AsignarNota:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso: ")
+                id_curso = input("\nIngrese el ID del curso: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -592,16 +596,16 @@ class AsignarNota:
         if id_curso not in self.manejo.cursos:
             print("Error: El curso no existe.")
             return
-        actividades = [info for info in self.manejo.actividades.values() if info['curso_id'] == id_curso]
-        if not actividades:
+        actividades_del_curso = {k: v for k, v in self.manejo.actividades.items() if v['curso_id'] == id_curso}
+        if not actividades_del_curso:
             print("No hay tareas o evaluaciones creadas para este curso.")
             return
         print("\nActividades disponibles en el curso:")
-        for actividad in actividades:
-            print(f"- {actividad['nombre']} ({actividad['descripcion']})")
+        for clave_actividad, actividad in actividades_del_curso.items():
+            print(f"- {actividad['nombre']} ({actividad['descripcion']}) - Clave: {clave_actividad}")
         while True:
             try:
-                nombre_actividad = input("\nIngrese el nombre de la actividad a calificar: ").upper()
+                nombre_actividad = input("\nIngrese el nombre de la actividad a calificar: ").upper().strip()
                 if not nombre_actividad.strip():
                     raise ValueError("El nombre no puede quedar vacio")
             except ValueError as e:
@@ -610,45 +614,39 @@ class AsignarNota:
                 print("Ocurrió un error:", e)
             else:
                 break
-        clave = f"{id_curso}-{nombre_actividad}"
-        if clave not in self.manejo.actividades:
+        clave_actividad = None
+        for k, v in self.manejo.actividades.items():
+            if v['curso_id'] == id_curso and v['nombre'].upper() == nombre_actividad:
+                clave_actividad = k
+                break
+        if not clave_actividad:
             print("Error: La actividad no se encontró en este curso.")
             return
-        estudiantes_inscritos = [estudiante_info for estudiante_info in self.manejo.usuarios.values()  if estudiante_info['rol'] == 'Estudiante' and id_curso in estudiante_info['cursos']]
+        estudiantes_inscritos = [id_estudiante for id_estudiante, info_estudiante in self.manejo.usuarios.items() if info_estudiante['rol'] == 'Estudiante' and id_curso in info_estudiante['cursos']]
         if not estudiantes_inscritos:
             print("No hay estudiantes inscritos en este curso.")
             return
-        print(f"\nAsignando notas para la actividad '{nombre_actividad}':")
-        for estudiante in estudiantes_inscritos:
-            try:
-                id_estudiante = None
-                for clave, valor in self.manejo.usuarios.items():
-                    if valor == estudiante:
-                        id_estudiante = clave
-                        break
-                while True:
-                    try:
-                        nota = float(input(f"  > Ingrese la nota para {estudiante['nombre']}: "))
-                        if nota < 0 :
-                            print(" Error la nota no puede ser menor a 0")
-                            continue
-                        if nota > 100:
-                            print(" Error La nota no puede ser mayor a 100")
-                            continue
-                        if not nota:
-                            print("Error la nota no puede quedar vacia")
-                    except ValueError:
-                        print(f"Error la nota solo puede ser un numero valido\n")
+        print(f"\nAsignando notas para la actividad '{self.manejo.actividades[clave_actividad]['nombre']}':")
+        for id_estudiante in estudiantes_inscritos:
+            estudiante_info = self.manejo.usuarios[id_estudiante]
+            while True:
+                try:
+                    nota = float(input(f"  > Ingrese la nota para {estudiante_info['nombre']}: "))
+                    if not 0 <= nota <= 100:
+                        print("Error: La nota debe ser un número entre 0 y 100.")
                         continue
-                    except Exception as e:
-                        print(f"Ocurrio un error {e}")
-                    else:
-                        break
-                clave_nota = f"{id_estudiante}-{clave}"
-                self.manejo.guardar_notas(clave_nota, {'nota': nota, 'id_estudiante': id_estudiante,'nombre_actividad': nombre_actividad})
-                print(f"Nota de {nota} registrada para {estudiante['nombre']}.")
-            except ValueError:
-                print("Error: La nota debe ser un número. Saltando a la siguiente nota.")
+                except ValueError:
+                    print("Error: La nota solo puede ser un número válido.")
+                    continue
+                except Exception as e:
+                    print(f"Ocurrió un error {e}")
+                    continue
+                else:
+                    break
+            clave_nota = f"{id_estudiante}-{clave_actividad}"
+            self.manejo.guardar_notas(clave_nota, {'nota': nota,'id_estudiante': id_estudiante,'nombre_actividad': self.manejo.actividades[clave_actividad]['nombre'],'curso_id': id_curso})
+            print(f"Nota de {nota} registrada para {estudiante_info['nombre']}.")
+
 
 class ConsultarCurso:
     def __init__(self, manejo):
@@ -663,7 +661,7 @@ class ConsultarCurso:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso que desea consultar: ")
+                id_curso = input("\nIngrese el ID del curso que desea consultar: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -712,7 +710,7 @@ class ConsultarEstudiantes:
 
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso para ver los estudiantes inscritos: ")
+                id_curso = input("\nIngrese el ID del curso para ver los estudiantes inscritos: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -755,7 +753,7 @@ class ConsultarCalificaciones:
             print(f"- {nombre} (Carnet: {id})")
         while True:
             try:
-                id_estudiante = input("\nIngrese el carnet del estudiante: ")
+                id_estudiante = input("\nIngrese el carnet del estudiante: ").upper()
                 if not id_estudiante.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -791,7 +789,7 @@ class ConsultarActividad:
             print(f"- ID: {id} | Nombre: {curso['nombre']}")
         while True:
             try:
-                id_curso = input("\nIngrese el ID del curso para ver sus actividades: ")
+                id_curso = input("\nIngrese el ID del curso para ver sus actividades: ").upper()
                 if not id_curso.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -829,7 +827,7 @@ class Reportes:
             print(f"- {nombre} (Carnet: {id})")
         while True:
             try:
-                id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ")
+                id_estudiante = input("\nIngrese el carnet del estudiante para generar el reporte: ").upper()
                 if not id_estudiante.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -875,7 +873,7 @@ class VerInfo:
     def ver_informacion(self):
         while True:
             try:
-                id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ")
+                id_busqueda = input("Ingrese el ID o carnet del usuario a consultar: ").upper()
                 if not id_busqueda.strip():
                     raise ValueError("El id no puede quedar vacio")
             except ValueError as e:
@@ -919,126 +917,147 @@ administrar_cursos = AdministrarCurso(manejo)
 ver_informacion = VerInfo(manejo)
 while True:
     print("---- Menú ----")
-    print("1. Crear Curso")
-    print("2. Administrar Curso")
-    print("3. Registrar Usuario (Estudiante/Instructor)")#Realizar sub-menú
-    print("4. Asignar Curso (Estudiante/Instructor)")
-    print("5. Crear Tarea o Evaluación")
-    print("6. Registrar nota (Tarea/Evaluación)") #Realizar sub-menú
-    print("7. Consultar Curso")
-    print("8. Consultar Estudiantes Inscritos")
-    print("9. Consultar Tarea o Evaluación") #Realizar sub-menú
-    print("10. Consultar Calificaciones")
-    print("11. Generar reporte")
-    print("12. Ver Información (Estudiante/Instructor)")
-    print("13. Salir del programa")
+    print("1. Crear")
+    print("2. Consultoria")
+    print("3. Administrar Cursos")
+    print("4. Generar Reporte")
+    print("5. Salir del Programa")
     menu_option = input("Ingrese el número de la opción que quiera ingresar: ")
     print()
     match menu_option:
         case "1":
-            print("Crear Curso")
-            crear_curso.registrar_curso()
-            print()
-        case "2":
-            print("Administrar Curso")
-            print("1. Eliminar Estudiante/Instructor")
-            print("2. Cambiar nombre al curso")
-            print("3 Cambiar ID al curso")
-            print("4. Cancelar administración")
-            menu_option4 = input("Ingrese el número de la opción que quiera realizar: ")
-            print()
-            match menu_option4:
-                case "1":
-                    print("Eliminar Estudiante/Instructor")
-                    administrar_cursos.eliminar_usuario()
-                    print()
-                case "2":
-                    print("Cambiar nombre al curso")
-                    administrar_cursos.cambiar_nombre()
-                    print()
-                case "3":
-                    print("Cambiar ID al curso")
-                    administrar_cursos.cambiar_id()
-                    print()
-                case "4":
-                    print("Cancelando intento administrativo")
-                case _:
-                    print("Error, ingrese datos validos")
-        case "3":
-            print("Registrar Usuario")
-            print("1. Registrar Estudiante")
-            print("2. Registrar Instructor")
-            print("3. Cancelar Registro")
+            print("Crear")
+            print("1. Crear Curso")
+            print("2. Crear Usuario")
+            print("3. Crear Actividad")
+            print("4. Cancelar creacion")
             menu_option2 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option2:
                 case "1":
-                    print("Registrar Estudiante")
-                    crear_usuario.registrar_estudiante()
+                    print("Crear Curso")
+                    crear_curso.registrar_curso()
                     print()
                 case "2":
-                    print("Registrar Instructor")
-                    crear_usuario.registrar_instructor()
+                    print("Crear Usuario")
+                    print("1. Registrar Estudiante")
+                    print("2. Registrar Instructor")
+                    menu_option02 = input("Ingrese el número de la opción que quiera realizar: ")
                     print()
+                    match menu_option02:
+                        case "1":
+                            print("Registrar Estudiante")
+                            crear_usuario.registrar_estudiante()
+                            print()
+                        case "2":
+                            print("Registrar Instructor")
+                            crear_usuario.registrar_instructor()
+                            print()
+                        case _:
+                            print("Valor invalido, vuelva a intentar")
+                            print()
                 case "3":
-                    print("Se ha cancelado el registro")
+                    print("Crear Actividad")
+                    print("1. Crear Tarea")
+                    print("2. Crear Evaluación")
+                    menu_option002 = input("Ingrese el número de la opción que quiera realizar: ")
                     print()
+                    match menu_option002:
+                        case "1":
+                            print("Crear Tarea")
+                            asignar_actividad.crear_tarea()
+                            print()
+                        case "2":
+                            print("Crear Evaluación")
+                            asignar_actividad.crear_evaluacion()
+                            print()
+                        case _:
+                            print("Vuelva a intentar")
+                            print()
+                case "4":
+                    print("Cancelando Creación")
                 case _:
-                    print("Ingrese datos validos")
-        case "4":
-            print("Asignar Curso")
-            asignar_curso.asignar_curso()
-            print()
-        case "5":
-            print("Crear Tarea o Evaluación")
-            print("1. Crear Tarea")
-            print("2. Crear Evaluación")
-            print("3. Cancelar Creación")
+                    print("Valor invalido, vuelva a intentar")
+                    print()
+        case "2":
+            print("Consultoria")
+            print("1. Consultar Curso")
+            print("2. Consultar Estudiantes Inscritos")
+            print("3. Consultar Actividades")
+            print("4. Consultar Calificaciones")
+            print("5. Consultar Información de Usuario")
+            print("6. Cancelar consulta")
             menu_option3 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
             match menu_option3:
                 case "1":
-                    print("Crear Tarea")
-                    asignar_actividad.crear_tarea()
+                    print("Consultar Curso")
+                    consultar_curso.consultar_curso()
                     print()
                 case "2":
-                    print("Crear Evaluación")
-                    asignar_actividad.crear_evaluacion()
+                    print("Consultar Estudiantes Inscritos")
+                    consultar_estudiantes.consultar_estudiantes()
                     print()
                 case "3":
-                    print("Cancelando creación de actividad")
+                    print("Consultar Actividades")
+                    consultar_actividad.consultar_actividad()
+                    print()
+                case "4":
+                    print("Consultar Calificaciones")
+                    consultar_calificaciones.consultar_calificaciones()
+                    print()
+                case "5":
+                    print("Consultar Información de Usuario")
+                    ver_informacion.ver_informacion()
+                    print()
+                case "6":
+                    print("Cancelando Consulta...")
                 case _:
-                    print("Ingrese un dato valido")
-        case "6":
-            print("Asignar nota")
-            asignar_nota.asignar_nota()
+                    print("Valor invalido, vuelva a intentar")
+                    print()
+        case "3":
+            print("Administrar Curso")
+            print("1. Asignar Curso a Usuario")
+            print("2. Registrar Nota a Estudiantes")
+            print("3. Eliminar Usuario de Algún Curso")
+            print("4. Cambiar de Nombre a un Curso")
+            print("5. Cambiar ID a un Curso")
+            print("6. Cancelar Administración")
+            menu_option4 = input("Ingrese el número de la opción que quiera realizar: ")
             print()
-        case "7":
-            print("Consultar Curso")
-            consultar_curso.consultar_curso()
-            print()
-        case "8":
-            print("Consultar Estudiantes Inscritos")
-            consultar_estudiantes.consultar_estudiantes()
-            print()
-        case "9":
-            print("Consultar Tarea/Evaluación")
-            consultar_actividad.consultar_actividad()
-            print()
-        case "10":
-            print("Consultar calificaciones")
-            consultar_calificaciones.consultar_calificaciones()
-            print()
-        case "11":
-            print("Generar reporte")
+            match menu_option4:
+                case "1":
+                    print("Asignar Curso a Usuario")
+                    asignar_curso.asignar_curso()
+                    print()
+                case "2":
+                    print("Registrar Nota a Estudiantes")
+                    asignar_nota.asignar_nota()
+                    print()
+                case "3":
+                    print("Eliminar Usuario de Algún Curso")
+                    administrar_cursos.eliminar_usuario()
+                    print()
+                case "4":
+                    print("Cambiar de Nombre a un Curso")
+                    administrar_cursos.cambiar_nombre()
+                    print()
+                case "5":
+                    print("Cambiar ID a un Curso")
+                    administrar_cursos.cambiar_id()
+                    print()
+                case "6":
+                    print("Cancelando adminitración...")
+                case _:
+                    print("Valor invalido, vuelva a intentar")
+                    print()
+        case "4":
+            print("Generar Reporte")
             crear_reporte.registrar_reporte()
             print()
-        case "12":
-            print("Ver información")
-            ver_informacion.ver_informacion()
-            print()
-        case "13":
-            print("Gracias por usar el programa.")
+        case "5":
+            print("Saliendo del programa, gracias por su preferencia")
             break
         case _:
-            print("Valor invalido. Vuelva a intentar")
+            print("Valor invalido, vuelva a intentar")
+            print()
